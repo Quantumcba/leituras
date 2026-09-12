@@ -22,6 +22,50 @@
       margin-bottom: 15px;
       color: #1a73e8;
     }
+
+    /* Estilo unificado para os botões de ação do Modal / Card */
+.btn-acao-modal {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 2px 3px rgba(255,255,255,0.4), inset 0 -3px 4px rgba(0,0,0,0.3);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  outline: none;
+  margin: 0 6px;
+}
+
+.btn-acao-modal:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 2px rgba(0,0,0,0.4);
+}
+
+/* Botão Excluir (Vermelho Metálico Redondo estilo o modelo) */
+.btn-excluir-redondo {
+  background: radial-gradient(circle at 35% 35%, #ff4d4d 0%, #cc0000 60%, #990000 100%);
+  color: white;
+  border: 2px solid #e0e0e0;
+}
+
+/* Botão Salvar (Azul Metálico Redondo com disquete) */
+.btn-salvar-redondo {
+  background: radial-gradient(circle at 35% 35%, #4da6ff 0%, #0066cc 60%, #004080 100%);
+  color: white;
+  border: 2px solid #e0e0e0;
+}
+
+/* Botão Cancelar (Cinza/Neutro com seta de retorno) */
+.btn-cancelar-redondo {
+  background: radial-gradient(circle at 35% 35%, #b3b3b3 0%, #666666 60%, #404040 100%);
+  color: white;
+  border: 2px solid #e0e0e0;
+}
+    
     .form-wrapper {
       max-width: 600px;
       margin: 20px auto;
@@ -362,11 +406,15 @@
     <label>Observações:</label>
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
 
-    <div class="form-buttons">
-      <button onclick="atualizarPlanilha()">Salvar Atualizações</button>
-      <button class="btn-cancelar" onclick="fecharFormularios()">Cancelar</button>
-      <!-- Botão de Excluir com Confirmação -->
-      <button onclick="confirmarExclusao(${i})" style="background-color: #d93025; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 5px;">🗑️ Excluir</button>
+    <div class="form-buttons" style="text-align: center; margin-top: 20px;">
+      <!-- Botão Salvar (Disquete 💾) -->
+      <button onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
+
+      <!-- Botão Excluir (Lixeira vermelha 🗑️ em relevo) -->
+      <button onclick="confirmarExclusao(${i})" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
+
+      <!-- Botão Cancelar (Seta de retorno ↩️) -->
+      <button onclick="fecharFormularios()" class="btn-acao-modal btn-cancelar-redondo" title="Cancelar">↩️</button>
     </div>
     <div id="statusMsg" class="msg"></div>
   </div>
