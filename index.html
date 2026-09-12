@@ -476,6 +476,34 @@
       document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo;
       document.getElementById("modalOverlay").style.display = "flex";
     }
+    function confirmarExclusao(numLinha) {
+      if (confirm("Tem certeza de que deseja apagar este livro? Esta ação não poderá ser desfeita.")) {
+        excluirLivroBackend(numLinha);
+      }
+    }
+
+    function excluirLivroBackend(numLinha) {
+      // Exibe algum feedback visual opcional de carregamento
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ funcao: "excluirLivro", linha: numLinha })
+      })
+      .then(response => response.json())
+      .then(resultado => {
+        if (resultado.status === "sucesso") {
+          alert("Livro excluído com sucesso!");
+          carregarLivros(); // Recarrega a lista na tela
+        } else {
+          alert("Erro ao excluir: " + resultado.mensagem);
+        }
+      })
+      .catch(erro => {
+        console.error("Erro:", erro);
+        alert("Erro de conexão ao tentar excluir.");
+      });
+    }
 
     function converterParaBR(dataIso) {
       if (!dataIso) return "";
