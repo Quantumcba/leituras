@@ -317,9 +317,11 @@
 </head>
 <body>
   
-  <!-- Cabeçalho com o Logo -->
-  <div style="text-align: center; padding: 20px 10px 5px 10px;">
+ <!-- Cabeçalho com o Logo e Botão de Ajuda (?) -->
+  <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
     <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
+    
+    <button onclick="abrirFluxogramaBackend()" style="position: absolute; right: 15px; top: 25px; width: 36px; height: 36px; border-radius: 50%; background-color: #1a73e8; color: white; border: none; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" title="Como funciona o Backend?">?</button>
   </div>
   <div id="debugStatus" class="erro-msg" style="text-align:center; padding: 20px;"></div>
 
@@ -456,6 +458,22 @@
     window.onload = function() {
       carregarDadosIniciais();
     };
+
+    function abrirFluxogramaBackend() {
+      document.getElementById("modalTitulo").innerText = "Arquitetura do Backend (Google Apps Script)";
+      document.getElementById("modalAutor").innerText = "Fluxograma lógico da API";
+      
+      let htmlConteudo = `
+        <p style="margin-bottom: 10px; color: #555; font-size: 14px;">Este é o fluxo de como o site no GitHub Pages comunica com o script no Google Sheets:</p>
+        <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #eee;">
+          <img src="backend.png" alt="Fluxograma Backend" style="max-width: 100%; height: auto; border-radius: 4px;" onerror="this.src='https://via.placeholder.com/450x200?text=backend.png+não+encontrada';">
+        </div>
+        <p style="margin-top: 10px; font-size: 12px; color: #666;">O arquivo <strong>backend.png</strong> precisa estar na mesma pasta raiz do repositório no GitHub junto com o index.html.</p>
+      `;
+
+      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo;
+      document.getElementById("modalOverlay").style.display = "flex";
+    }
 
     function converterParaBR(dataIso) {
       if (!dataIso) return "";
