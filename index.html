@@ -26,8 +26,8 @@
     /* Estilo unificado para os botões de ação do Modal / Card */
 /* Estilo unificado para os botões de ação do Modal / Card */
 .btn-acao-modal {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  aspect-ratio: 1 / 1; /* Força matematicamente a altura a ser exatamente igual à largura */
   border-radius: 50%;
   font-size: 18px;
   border: none;
@@ -40,6 +40,7 @@
   outline: none;
   margin: 0 8px;
   vertical-align: middle;
+  padding: 0; /* Remove qualquer enchimento que possa esticar o círculo */
 }
 
 .btn-acao-modal:active {
