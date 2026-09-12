@@ -777,12 +777,16 @@
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // ADICIONE ESTA LINHA
         body: JSON.stringify(dadosEnvio)
       })
-      .then(res => res.json())
       .then(resp => {
         fecharFormularios();
-        carregarDadosIniciais();
+        document.getElementById("statusMsg").innerText = "Atualizando tela...";
+        // Aguarda 1 segundo antes de baixar os dados de novo
+        setTimeout(() => {
+          carregarDadosIniciais();
+        }, 1000);
       })
       .catch(err => {
         document.getElementById("statusMsg").innerText = "Erro ao salvar: " + err.message;
@@ -816,12 +820,17 @@
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // ADICIONE ESTA LINHA
         body: JSON.stringify(dadosEnvio)
       })
       .then(res => res.json())
       .then(resp => {
         fecharFormularios();
-        carregarDadosIniciais();
+        document.getElementById("statusMsg").innerText = "Atualizando tela...";
+        // Aguarda 1 segundo antes de baixar os dados de novo
+        setTimeout(() => {
+          carregarDadosIniciais();
+        }, 1000);
       })
       .catch(err => {
         document.getElementById("statusNovoMsg").innerText = "Erro ao cadastrar: " + err.message;
