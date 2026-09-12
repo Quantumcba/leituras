@@ -774,12 +774,13 @@
 
       document.getElementById("statusMsg").innerText = "Salvando...";
 
-      fetch(WEB_APP_URL, {
+     fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // ADICIONE ESTA LINHA
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, 
         body: JSON.stringify(dadosEnvio)
       })
+      .then(response => response.json()) // <-- ADICIONE ESTA LINHA AQUI
       .then(resp => {
         fecharFormularios();
         document.getElementById("statusMsg").innerText = "Atualizando tela...";
