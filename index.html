@@ -23,51 +23,50 @@
       color: #1a73e8;
     }
 
-    /* Estilo unificado para os botões de ação do Modal / Card */
-/* Estilo unificado para os botões de ação do Modal / Card */
-.btn-acao-modal {
-  width: 42px;
-  aspect-ratio: 1 / 1; /* Força matematicamente a altura a ser exatamente igual à largura */
-  border-radius: 50%;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  outline: none;
-  margin: 0 8px;
-  vertical-align: middle;
-  padding: 0; /* Remove qualquer enchimento que possa esticar o círculo */
-}
+    /* Estilo unificado para os botões de ação do Modal / Card corrigido para CÍRCULO PERFEITO */
+    .btn-acao-modal {
+      width: 42px;
+      aspect-ratio: 1 / 1; /* Força altura igual a largura */
+      border-radius: 50%;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      outline: none;
+      margin: 0 8px;
+      vertical-align: middle;
+      padding: 0; /* Remove enchimento que causa distorção oval */
+    }
 
-.btn-acao-modal:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 2px rgba(0,0,0,0.4);
-}
+    .btn-acao-modal:active {
+      transform: scale(0.95);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 2px rgba(0,0,0,0.4);
+    }
 
-/* Botão Excluir (Vermelho Metálico Redondo estilo o modelo) */
-.btn-excluir-redondo {
-  background: radial-gradient(circle at 35% 35%, #ff4d4d 0%, #cc0000 60%, #990000 100%);
-  color: white;
-  border: 2px solid #e0e0e0;
-}
+    /* Botão Excluir (Vermelho Metálico Redondo estilo o modelo) */
+    .btn-excluir-redondo {
+      background: radial-gradient(circle at 35% 35%, #ff4d4d 0%, #cc0000 60%, #990000 100%);
+      color: white;
+      border: 2px solid #e0e0e0;
+    }
 
-/* Botão Salvar (Azul Metálico Redondo com disquete) */
-.btn-salvar-redondo {
-  background: radial-gradient(circle at 35% 35%, #4da6ff 0%, #0066cc 60%, #004080 100%);
-  color: white;
-  border: 2px solid #e0e0e0;
-}
+    /* Botão Salvar (Azul Metálico Redondo com disquete) */
+    .btn-salvar-redondo {
+      background: radial-gradient(circle at 35% 35%, #4da6ff 0%, #0066cc 60%, #004080 100%);
+      color: white;
+      border: 2px solid #e0e0e0;
+    }
 
-/* Botão Cancelar (Cinza/Neutro com seta de retorno) */
-.btn-cancelar-redondo {
-  background: radial-gradient(circle at 35% 35%, #b3b3b3 0%, #666666 60%, #404040 100%);
-  color: white;
-  border: 2px solid #e0e0e0;
-}
+    /* Botão Cancelar (Cinza/Neutro com seta de retorno) */
+    .btn-cancelar-redondo {
+      background: radial-gradient(circle at 35% 35%, #b3b3b3 0%, #666666 60%, #404040 100%);
+      color: white;
+      border: 2px solid #e0e0e0;
+    }
     
     .form-wrapper {
       max-width: 600px;
@@ -409,15 +408,15 @@
     <label>Observações:</label>
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
 
-    <div class="form-buttons" style="text-align: center; margin-top: 20px;">
-      <!-- Botão Salvar (Disquete 💾) -->
-      <button onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
+    <div class="form-buttons" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center;">
+      <!-- Botão Salvar -->
+      <button type="button" onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
 
-      <!-- Botão Excluir (Lixeira vermelha 🗑️ em relevo) -->
-      <button onclick="confirmarExclusao(${i})" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
+      <!-- Botão Excluir (Agora chamando a função correta que descobre a linha sozinha) -->
+      <button type="button" onclick="confirmarExclusaoAtual()" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
 
-      <!-- Botão Cancelar (Seta de retorno ↩️) -->
-      <button onclick="fecharFormularios()" class="btn-acao-modal btn-cancelar-redondo" title="Cancelar">↩️</button>
+      <!-- Botão Cancelar -->
+      <button type="button" onclick="fecharFormularios()" class="btn-acao-modal btn-cancelar-redondo" title="Cancelar">↩️</button>
     </div>
     <div id="statusMsg" class="msg"></div>
   </div>
@@ -521,20 +520,28 @@
         <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #eee;">
           <img src="backend.png" alt="Fluxograma Backend" style="max-width: 100%; height: auto; border-radius: 4px;" onerror="this.src='https://via.placeholder.com/450x200?text=backend.png+não+encontrada';">
         </div>
-        <!--<p style="margin-top: 10px; font-size: 12px; color: #666;">O arquivo <strong>backend.png</strong> precisa estar na mesma pasta raiz do repositório no GitHub junto com o index.html.</p>-->
       `;
 
       document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo;
       document.getElementById("modalOverlay").style.display = "flex";
     }
-    function confirmarExclusao(numLinha) {
+
+    // NOVA FUNÇÃO: Pega a linha correta diretamente do formulário de edição
+    function confirmarExclusaoAtual() {
+      let numLinha = document.getElementById("linhaPlanilha").value;
+      if (!numLinha) {
+        alert("Erro: Não foi possível identificar o livro a ser excluído.");
+        return;
+      }
+      
       if (confirm("Tem certeza de que deseja apagar este livro? Esta ação não poderá ser desfeita.")) {
         excluirLivroBackend(numLinha);
       }
     }
 
     function excluirLivroBackend(numLinha) {
-      // Exibe algum feedback visual opcional de carregamento
+      document.getElementById("statusMsg").innerText = "Excluindo...";
+      
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
@@ -545,14 +552,17 @@
       .then(resultado => {
         if (resultado.status === "sucesso") {
           alert("Livro excluído com sucesso!");
-          carregarLivros(); // Recarrega a lista na tela
+          fecharFormularios(); // Fecha a tela de edição
+          carregarDadosIniciais(); // Recarrega os cards na tela corretamente
         } else {
           alert("Erro ao excluir: " + resultado.mensagem);
+          document.getElementById("statusMsg").innerText = "";
         }
       })
       .catch(erro => {
         console.error("Erro:", erro);
         alert("Erro de conexão ao tentar excluir.");
+        document.getElementById("statusMsg").innerText = "";
       });
     }
 
