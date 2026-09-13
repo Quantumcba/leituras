@@ -369,7 +369,6 @@
 </head>
 <body>
   <!-- Tela de Login / Senha -->
-<!-- Tela de Login / Senha -->
 <div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
     <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
         <h3>🔒 Acesso Restrito</h3>
@@ -437,7 +436,7 @@
       <!-- Botão Salvar -->
       <button type="button" onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
 
-      <!-- Botão Excluir (Agora chamando a função correta que descobre a linha sozinha) -->
+      <!-- Botão Excluir -->
       <button type="button" onclick="confirmarExclusaoAtual()" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
 
       <!-- Botão Cancelar -->
@@ -526,15 +525,11 @@
   </div>
 
   <script>
-
-<!--var SENHA_MEU_SITE = "1212"; // Troque pela senha que preferir-->
-
 // A senha não fica mais fixa aqui no site, ela vai consultar a planilha!
 function verificarSenha() {
     var digitada = document.getElementById("input-senha").value;
     var erro = document.getElementById("erro-senha");
     
-    // Faz uma requisição POST para o Apps Script checar a célula A100
     fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
@@ -562,33 +557,30 @@ function verificarSenha() {
     });
 }
 
-// Função para alternar entre mostrar e esconder a senha com o olho
 function alternarVisibilidadeSenha() {
     var input = document.getElementById("input-senha");
     var icone = document.getElementById("toggle-senha");
     if (input.type === "password") {
         input.type = "text";
-        icone.textContent = "👁️"; // Olho aberto
+        icone.textContent = "👁️"; 
     } else {
         input.type = "password";
-        icone.textContent = "👁️‍🗨️"; // Olho fechado / cortado
+        icone.textContent = "👁️‍🗨️"; 
     }
 }
 
-// Adiciona o ouvinte para detectar quando a tecla Enter for pressionada
 window.addEventListener("DOMContentLoaded", function() {
     var jaLogado = sessionStorage.getItem("logado");
     if (jaLogado === "true") {
         document.getElementById("modal-senha").style.display = "none";
     }
 
-    // Escuta o evento de digitação no campo de senha
     var inputSenha = document.getElementById("input-senha");
     if (inputSenha) {
         inputSenha.addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
-                event.preventDefault(); // Evita comportamento padrão
-                verificarSenha(); // Dispara o botão entrar
+                event.preventDefault(); 
+                verificarSenha(); 
             }
         });
     }
@@ -619,7 +611,6 @@ window.addEventListener("DOMContentLoaded", function() {
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
-    // NOVA FUNÇÃO: Pega a linha correta diretamente do formulário de edição
     function confirmarExclusaoAtual() {
       let numLinha = document.getElementById("linhaPlanilha").value;
       if (!numLinha) {
@@ -645,8 +636,8 @@ window.addEventListener("DOMContentLoaded", function() {
       .then(resultado => {
         if (resultado.status === "sucesso") {
           alert("Livro excluído com sucesso!");
-          fecharFormularios(); // Fecha a tela de edição
-          carregarDadosIniciais(); // Recarrega os cards na tela corretamente
+          fecharFormularios(); 
+          carregarDadosIniciais(); 
         } else {
           alert("Erro ao excluir: " + resultado.mensagem);
           document.getElementById("statusMsg").innerText = "";
@@ -867,98 +858,88 @@ window.addEventListener("DOMContentLoaded", function() {
 
       document.getElementById("statusMsg").innerText = "Salvando...";
 
-     fetch(WEB_APP_URL, {
+      fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
         headers: { "Content-Type": "text/plain;charset=utf-8" }, 
         body: JSON.stringify(dadosEnvio)
       })
-      .then(response => response.json()) // <-- ADICIONE ESTA LINHA AQUI
+      .then(response => response.json())
       .then(resp => {
-        fecharFormularios();
-        document.getElementById("statusMsg").innerText = "Atualizando tela...";
-        // Aguarda 1 segundo antes de baixar os dados de novo
-        setTimeout(() => {
-          carregarDadosIniciais();
-        }, 1000);
+        if (resp.status === "sucesso") {
+          document.getElementById("statusMsg").innerText = "Salvo com sucesso!";
+          setTimeout(() => {
+            fecharFormularios();
+            carregarDadosIniciais();
+          }, 1000);
+        } else {
+          document.getElementById("statusMsg").innerText = "Erro ao salvar: " + (resp.mensagem || "Erro desconhecido");
+        }
       })
       .catch(err => {
-        document.getElementById("statusMsg").innerText = "Erro ao salvar: " + err.message;
+        console.error("Erro:", err);
+        document.getElementById("statusMsg").innerText = "Erro de conexão ao salvar.";
       });
     }
 
     function salvarNovoLivro() {
       let dadosEnvio = {
-        funcao: "adicionarLivro",
+        funcao: "inserirLivro",
         livro: document.getElementById("novoLivro").value,
         autor: document.getElementById("novoAutor").value,
         capituloAtual: document.getElementById("novoCapituloAtual").value,
-        nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
         totalCapitulos: document.getElementById("novoTotalCapitulos").value,
+        nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
         paginaInicial: document.getElementById("novoPaginaInicial").value,
         paginaAtual: document.getElementById("novoPaginaAtual").value,
         totalPaginas: document.getElementById("novoTotalPaginas").value,
         capaUrl: document.getElementById("novoCapaUrl").value,
+        subcapitulos: document.getElementById("novoSubcapitulos").value,
         dataLeitura: converterParaBR(document.getElementById("novoData").value),
-        observacoes: document.getElementById("novoObservacoes").value,
-        subcapitulos: document.getElementById("novoSubcapitulos").value
+        observacoes: document.getElementById("novoObservacoes").value
       };
 
-      if (!dadosEnvio.livro) {
-        alert("Por favor, digite o nome do livro!");
-        return;
-      }
-
-      document.getElementById("statusNovoMsg").innerText = "Cadastrando...";
+      document.getElementById("statusNovoMsg").innerText = "Cadastrando novo livro...";
 
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // ADICIONE ESTA LINHA
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(dadosEnvio)
       })
-      .then(res => res.json())
+      .then(response => response.json())
       .then(resp => {
-        fecharFormularios();
-        document.getElementById("statusMsg").innerText = "Atualizando tela...";
-        // Aguarda 1 segundo antes de baixar os dados de novo
-        setTimeout(() => {
-          carregarDadosIniciais();
-        }, 1000);
+        if (resp.status === "sucesso") {
+          document.getElementById("statusNovoMsg").innerText = "Livro cadastrado com sucesso!";
+          setTimeout(() => {
+            fecharFormularios();
+            carregarDadosIniciais();
+          }, 1000);
+        } else {
+          document.getElementById("statusNovoMsg").innerText = "Erro: " + (resp.mensagem || "Erro desconhecido");
+        }
       })
       .catch(err => {
-        document.getElementById("statusNovoMsg").innerText = "Erro ao cadastrar: " + err.message;
+        console.error("Erro:", err);
+        document.getElementById("statusNovoMsg").innerText = "Erro de conexão ao cadastrar.";
       });
     }
-    
-    function abrirModal(item) {
-      document.getElementById("modalTitulo").innerText = item.livro;
-      document.getElementById("modalAutor").innerText = item.autor ? `Autor: ${item.autor}` : "";
-      
-      let mapSub = item.subcapitulosMap || {};
-      let mapNome = item.nomesCapitulosMap || {};
-      let chavesSet = new Set([...Object.keys(mapSub), ...Object.keys(mapNome)]);
-      let chaves = Array.from(chavesSet).sort((a, b) => parseInt(a) - parseInt(b));
-      
-      let htmlConteudo = "";
-      if (chaves.length > 0) {
-        chaves.forEach(cap => {
-          let nomeDoCap = mapNome[cap] ? ` - ${mapNome[cap]}` : ((cap == item.capituloAtual && item.nomeCapitulo) ? ` - ${item.nomeCapitulo}` : "");
-          let subTexto = mapSub[cap] || "Nenhum subcapítulo registrado.";
-          let eCapituloAtual = (String(cap) === String(item.capituloAtual));
-          let cabecalhoTexto = `[ Capítulo ${cap}${nomeDoCap} ]`;
-          
-          if (eCapituloAtual) {
-            htmlConteudo += `<strong style="color: #28a745;">${cabecalhoTexto}</strong>\n${subTexto}\n\n`;
-          } else {
-            htmlConteudo += `${cabecalhoTexto}\n${subTexto}\n\n`;
-          }
-        });
-      } else {
-        htmlConteudo = "Nenhum dado registrado para este livro.";
-      }
 
-      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo.trim();
+    function abrirModal(item) {
+      document.getElementById("modalTitulo").innerText = item.livro || "Detalhes do Livro";
+      document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
+      
+      let textoSub = "";
+      if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
+        for (let cap in item.subcapitulosMap) {
+          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
+          textoSub += `Capítulo ${cap}${nomeCap}:\n${item.subcapitulosMap[cap]}\n\n`;
+        }
+      } else {
+        textoSub = item.subcapitulos || "Nenhum subcapítulo registrado.";
+      }
+      
+      document.getElementById("modalTextoSubcapitulos").innerText = textoSub.trim();
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
@@ -967,7 +948,9 @@ window.addEventListener("DOMContentLoaded", function() {
     }
 
     function fecharModalFora(event) {
-      if (event.target === document.getElementById("modalOverlay")) fecharModal();
+      if (event.target === document.getElementById("modalOverlay")) {
+        fecharModal();
+      }
     }
   </script>
 </body>
