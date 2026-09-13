@@ -753,7 +753,11 @@
             let capNum = item.capituloAtual || '-';
             let capTot = item.totalCapitulos ? ` / ${item.totalCapitulos}` : '';
             let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[capNum]) ? item.nomesCapitulosMap[capNum] : (item.nomeCapitulo || '');
-            let capTexto = `${capNum}${capTot}` + (nomeCapCard ? `: ${nomeCapCard}` : '');
+
+            // Estilo do realce: fundo verde claro, texto verde escuro, bordas arredondadas
+            let spanRealce = nomeCapCard ? `<span style="background-color: #e8f5e9; color: #1e7e34; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; margin-left: 6px; border: 1px solid #c3e6cb; display: inline-block; vertical-align: middle;">${nomeCapCard}</span>` : '';
+
+            let capTexto = `${capNum}${capTot}${spanRealce}`;
 
             // --- CÁLCULO DA BARRA DE PROGRESSO POR PÁGINAS ---
             // Se a Página Inicial estiver vazia na planilha, assume 1 por padrão
