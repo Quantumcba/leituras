@@ -527,17 +527,39 @@
 
   <script>
 
-    var SENHA_MEU_SITE = "1212"; // Troque pela senha que preferir
+<!--var SENHA_MEU_SITE = "1212"; // Troque pela senha que preferir-->
 
+// A senha não fica mais fixa aqui no site, ela vai consultar a planilha!
 function verificarSenha() {
     var digitada = document.getElementById("input-senha").value;
-    if (digitada === SENHA_MEU_SITE) {
-        sessionStorage.setItem("logado", "true");
-        document.getElementById("modal-senha").style.display = "none";
-    } else {
-        var erro = document.getElementById("erro-senha");
+    var erro = document.getElementById("erro-senha");
+    
+    // Faz uma requisição POST para o Apps Script checar a célula A100
+    fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+            funcao: "validarSenha",
+            senha: digitada
+        })
+    })
+    .then(response => response.json())
+    .then(resultado => {
+        if (resultado.status === "sucesso") {
+            sessionStorage.setItem("logado", "true");
+            document.getElementById("modal-senha").style.display = "none";
+            erro.style.display = "none";
+        } else {
+            erro.textContent = resultado.mensagem || "Senha incorreta!";
+            erro.style.display = "block";
+        }
+    })
+    .catch(err => {
+        console.error("Erro ao validar senha:", err);
+        erro.textContent = "Erro de conexão com o servidor.";
         erro.style.display = "block";
-    }
+    });
 }
 
 // Função para alternar entre mostrar e esconder a senha com o olho
