@@ -345,11 +345,11 @@
       border-left: 4px solid #1e7e34;
       padding: 12px;
       margin-top: 10px;
-      white-space: pre-line;
-      font-family: monospace;
+      font-family: Arial, sans-serif;
       font-size: 13px;
       color: #333;
       border-radius: 0 4px 4px 0;
+      line-height: 1.5;
     }
     @media (min-width: 850px) {
       .cards-container {
@@ -401,7 +401,7 @@
     <input type="text" id="txtLivro" disabled style="background-color: #e8f5e9; color: #0f5132; font-weight: bold; border: 1px solid #c3e6cb;">
 
     <label>Nome do Capítulo:</label>
-    <input type="text" id="txtNomeCapitulo" placeholder="Ex: Introdução" oninput="atualizarRotuloSubcapitulo()">
+    <input type="text" id="txtNomeCapitulo" placeholder="Ex: Introdução" oninput="aoDigitarNomeCapitulo()">
 
     <div class="row-edit-compact">
       <div>
@@ -419,7 +419,7 @@
     </div>
 
     <label id="lblSubcapitulos" style="margin-top: 6px; display: block;">Subcapítulos do Capítulo:</label>
-    <textarea id="txtSubcapitulos" placeholder="Digite os subcapítulos..."></textarea>
+    <textarea id="txtSubcapitulos" placeholder="Digite apenas os subcapítulos..." oninput="aoDigitarSubcapitulos()"></textarea>
 
     <label>Observações:</label>
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
@@ -506,7 +506,7 @@
       <span class="modal-close" onclick="fecharModal()">&times;</span>
       <h3 id="modalTitulo" style="color: #1a73e8; margin-top: 0;">Título do Livro</h3>
       <div id="modalAutor" style="font-weight: bold; color: #1e7e34; margin-bottom: 12px; font-size: 14px;"></div>
-      <p style="font-weight: bold; color: #555; margin-bottom: 5px;">Subcapítulos por Capítulo:</p>
+      <p style="font-weight: bold; color: #555; margin-bottom: 5px;">Estrutura dos Capítulos:</p>
       <div class="modal-subcapitulos" id="modalTextoSubcapitulos">Nenhum subcapítulo registrado.</div>
     </div>
   </div>
@@ -601,21 +601,34 @@
       document.getElementById("modalTitulo").innerText = item.livro;
       document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
       
-      let texto = "";
+      let capAtualStr = String(item.capituloAtual || '').trim();
+      let textoHtml = "";
+
       if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
         let chaves = Object.keys(item.subcapitulosMap).sort((a, b) => Number(a) - Number(b));
         let blocos = [];
         chaves.forEach(cap => {
-          blocos.push(`<strong>Capítulo ${cap}:</strong>\n${item.subcapitulosMap[cap]}`);
+          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? item.nomesCapitulosMap[cap] : "";
+          let tituloCap = `Capítulo ${cap}` + (nomeCap ? `: ${nomeCap}` : "");
+          
+          let ehCapituloAtual = (String(cap).trim() === capAtualStr);
+          
+          let headerHtml = ehCapituloAtual 
+            ? `<div style="color: #1e7e34; font-weight: bold; font-size: 14px; background-color: #e8f5e9; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #28a745; margin-bottom: 4px;">📍 ${tituloCap} (Atual)</div>`
+            : `<div style="color: #333; font-weight: bold; font-size: 14px; margin-bottom: 4px;">${tituloCap}</div>`;
+            
+          let conteudoSub = item.subcapitulosMap[cap] ? item.subcapitulosMap[cap].replace(/\n/g, "<br>") : "<em style='color: #888;'>(Nenhum subcapítulo registrado)</em>";
+
+          blocos.push(`${headerHtml}<div style="padding-left: 10px; margin-bottom: 12px; color: #444;">${conteudoSub}</div>`);
         });
-        texto = blocos.join("\n\n");
+        textoHtml = blocos.join("");
       } else if (item.subcapitulos) {
-        texto = item.subcapitulos;
+        textoHtml = item.subcapitulos.replace(/\n/g, "<br>");
       } else {
-        texto = "Nenhum subcapítulo registrado.";
+        textoHtml = "Nenhum subcapítulo registrado.";
       }
 
-      document.getElementById("modalTextoSubcapitulos").innerHTML = texto.replace(/\n/g, "<br>");
+      document.getElementById("modalTextoSubcapitulos").innerHTML = textoHtml;
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
@@ -736,10 +749,11 @@
             };
 
             let dataVisual = formatarDataTela(item.dataExibicao || item.dataIso);
-            let capTexto = item.totalCapitulos ? `${item.capituloAtual || '-'} / ${item.totalCapitulos}` : (item.capituloAtual || '-');
             
-            let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[item.capituloAtual]) ? item.nomesCapitulosMap[item.capituloAtual] : item.nomeCapitulo;
-            if (nomeCapCard) capTexto += ` (${nomeCapCard})`;
+            let capNum = item.capituloAtual || '-';
+            let capTot = item.totalCapitulos ? ` / ${item.totalCapitulos}` : '';
+            let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[capNum]) ? item.nomesCapitulosMap[capNum] : (item.nomeCapitulo || '');
+            let capTexto = `${capNum}${capTot}` + (nomeCapCard ? `: ${nomeCapCard}` : '');
 
             let pagInicialNum = parseFloat(item.paginaInicial) || 1;
             let pagAtualNum = parseFloat(item.paginaAtual) || pagInicialNum;
@@ -805,12 +819,12 @@
       document.getElementById("txtPaginaInicial").value = dados.paginaInicial || "";
       document.getElementById("txtTotalPaginas").value = dados.totalPaginas || "";
       document.getElementById("txtTotalCapitulos").value = dados.totalCapitulos || "";
-      document.getElementById("txtCapituloAtual").value = dados.capituloAtual;
-      document.getElementById("txtPaginaAtual").value = dados.paginaAtual;
+      document.getElementById("txtCapituloAtual").value = dados.capituloAtual || "";
+      document.getElementById("txtPaginaAtual").value = dados.paginaAtual || "";
       document.getElementById("txtData").value = formatarDataIso(dados.dataIso || dados.dataExibicao);
       
-      subcapitulosMapAtual = dados.subcapitulosMap || {};
-      nomesCapitulosMapAtual = dados.nomesCapitulosMap || {};
+      subcapitulosMapAtual = Object.assign({}, dados.subcapitulosMap || {});
+      nomesCapitulosMapAtual = Object.assign({}, dados.nomesCapitulosMap || {});
       
       aoMudarCapituloAtual();
       
@@ -831,9 +845,26 @@
 
     function aoMudarCapituloAtual() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
+      
       document.getElementById("txtNomeCapitulo").value = (cap && nomesCapitulosMapAtual[cap] !== undefined) ? nomesCapitulosMapAtual[cap] : "";
       document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
+      
       atualizarRotuloSubcapitulo();
+    }
+
+    function aoDigitarNomeCapitulo() {
+      let cap = document.getElementById("txtCapituloAtual").value.trim();
+      if (cap) {
+        nomesCapitulosMapAtual[cap] = document.getElementById("txtNomeCapitulo").value;
+      }
+      atualizarRotuloSubcapitulo();
+    }
+
+    function aoDigitarSubcapitulos() {
+      let cap = document.getElementById("txtCapituloAtual").value.trim();
+      if (cap) {
+        subcapitulosMapAtual[cap] = document.getElementById("txtSubcapitulos").value;
+      }
     }
 
     function mostrarFormNovo() {
@@ -859,6 +890,12 @@
     }
 
     function atualizarPlanilha() {
+      let cap = document.getElementById("txtCapituloAtual").value.trim();
+      if (cap) {
+        nomesCapitulosMapAtual[cap] = document.getElementById("txtNomeCapitulo").value;
+        subcapitulosMapAtual[cap] = document.getElementById("txtSubcapitulos").value;
+      }
+
       let dadosEnvio = {
         funcao: "salvarDados",
         linha: document.getElementById("linhaPlanilha").value,
