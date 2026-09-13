@@ -368,6 +368,17 @@
   </style>
 </head>
 <body>
+  <!-- Tela de Login / Senha -->
+<div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+    <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
+        <h3>🔒 Acesso Restrito</h3>
+        <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Digite a senha para ver seus livros</p>
+        <input type="password" id="input-senha" placeholder="Sua senha" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; text-align: center; outline: none;">
+        <br>
+        <button onclick="verificarSenha()" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Entrar</button>
+        <p id="erro-senha" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Senha incorreta!</p>
+    </div>
+</div>
   
  <!-- Cabeçalho com o Logo e Botão de Ajuda (?) -->
   <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
@@ -507,6 +518,32 @@
   </div>
 
   <script>
+
+    // Defina a sua senha aqui
+var SENHA_MEU_SITE = "12345"; // Troque pela senha que preferir
+
+function verificarSenha() {
+    var digitada = document.getElementById("input-senha").value;
+    if (digitada === SENHA_MEU_SITE) {
+        // Salva na sessão do navegador que já está logado
+        sessionStorage.setItem("logado", "true");
+        // Esconde a tela de senha
+        document.getElementById("modal-senha").style.display = "none";
+    } else {
+        var erro = document.getElementById("erro-senha");
+        erro.style.display = "block";
+    }
+}
+
+// Executa assim que a página carrega para checar se já foi autenticado nesta sessão
+window.addEventListener("DOMContentLoaded", function() {
+    var jaLogado = sessionStorage.getItem("logado");
+    if (jaLogado === "true") {
+        // Se já digitou a senha antes nesta aba, esconde a tela de login na hora
+        document.getElementById("modal-senha").style.display = "none";
+    }
+});
+    
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS7JUhF710rUDM8iYGoRTTqynPZ0yLFGJJtevtY7w_M-v0XAI6hRzDNEqvwTpEe2WcQQ/exec";
 
     let dadosGlobais = [];
