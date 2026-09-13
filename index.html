@@ -7,7 +7,6 @@
     html, body {
       font-family: Arial, sans-serif;
       background-color: #0b0f19;
-      /* Adicione estas linhas para usar a imagem */
       background-image: url('fundo.png');
       background-size: cover;
       background-position: center;
@@ -23,51 +22,47 @@
       color: #1a73e8;
     }
 
-    /* Estilo unificado para os botões de ação do Modal / Card corrigido para CÍRCULO PERFEITO */
     .btn-acao-modal {
-    width: 50px !important;
-    height: 50px !important;
-    min-width: 50px !important;
-    max-width: 50px !important;
-    min-height: 50px !important;
-    max-height: 50px !important;
-    flex: 0 0 50px !important; /* Trava o flexbox para não deixar o botão esticar */
-    aspect-ratio: 1 / 1 !important; 
-    border-radius: 50% !important;
-    font-size: 20px !important;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-    outline: none;
-    margin: 0 8px;
-    vertical-align: middle;
-    padding: 0 !important;
-}
+      width: 50px !important;
+      height: 50px !important;
+      min-width: 50px !important;
+      max-width: 50px !important;
+      min-height: 50px !important;
+      max-height: 50px !important;
+      flex: 0 0 50px !important;
+      aspect-ratio: 1 / 1 !important; 
+      border-radius: 50% !important;
+      font-size: 20px !important;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+      outline: none;
+      margin: 0 8px;
+      vertical-align: middle;
+      padding: 0 !important;
+    }
 
     .btn-acao-modal:active {
       transform: scale(0.95);
       box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 2px rgba(0,0,0,0.4);
     }
 
-    /* Botão Excluir (Vermelho Metálico Redondo estilo o modelo) */
     .btn-excluir-redondo {
       background: radial-gradient(circle at 35% 35%, #ff4d4d 0%, #cc0000 60%, #990000 100%);
       color: white;
       border: 2px solid #e0e0e0;
     }
 
-    /* Botão Salvar (Azul Metálico Redondo com disquete) */
     .btn-salvar-redondo {
       background: radial-gradient(circle at 35% 35%, #4da6ff 0%, #0066cc 60%, #004080 100%);
       color: white;
       border: 2px solid #e0e0e0;
     }
 
-    /* Botão Cancelar (Cinza/Neutro com seta de retorno) */
     .btn-cancelar-redondo {
       background: radial-gradient(circle at 35% 35%, #b3b3b3 0%, #666666 60%, #404040 100%);
       color: white;
@@ -369,25 +364,22 @@
 </head>
 <body>
   <!-- Tela de Login / Senha -->
-<div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
+  <div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
     <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
         <h3>🔒 Acesso Restrito</h3>
         <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Digite a senha para ver seus livros</p>
         
-        <!-- Campo de senha com o ícone de olho embutido -->
         <div style="position: relative; width: 100%; margin-bottom: 15px;">
             <input type="password" id="input-senha" placeholder="Sua senha" style="width: 100%; padding: 10px 40px 10px 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; text-align: center; outline: none; box-sizing: border-box;">
             <span id="toggle-senha" onclick="alternarVisibilidadeSenha()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; user-select: none;" title="Mostrar/Ocultar senha">👁️‍🗨️</span>
         </div>
 
-        <!-- Botão Entrar menor -->
         <button onclick="verificarSenha()" style="width: 120px; padding: 8px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">Entrar</button>
         
         <p id="erro-senha" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Senha incorreta!</p>
     </div>
-</div>
+  </div>
   
- <!-- Cabeçalho com o Logo e Botão de Ajuda (?) -->
   <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
     <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
     
@@ -433,13 +425,8 @@
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
 
     <div class="form-buttons" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center;">
-      <!-- Botão Salvar -->
       <button type="button" onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
-
-      <!-- Botão Excluir -->
       <button type="button" onclick="confirmarExclusaoAtual()" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
-
-      <!-- Botão Cancelar -->
       <button type="button" onclick="fecharFormularios()" class="btn-acao-modal btn-cancelar-redondo" title="Cancelar">↩️</button>
     </div>
     <div id="statusMsg" class="msg"></div>
@@ -525,76 +512,75 @@
   </div>
 
   <script>
-// A senha não fica mais fixa aqui no site, ela vai consultar a planilha!
-function verificarSenha() {
-    var digitada = document.getElementById("input-senha").value;
-    var erro = document.getElementById("erro-senha");
-    
-    fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-            funcao: "validarSenha",
-            senha: digitada
-        })
-    })
-    .then(response => response.json())
-    .then(resultado => {
-        if (resultado.status === "sucesso") {
-            sessionStorage.setItem("logado", "true");
-            document.getElementById("modal-senha").style.display = "none";
-            erro.style.display = "none";
-        } else {
-            erro.textContent = resultado.mensagem || "Senha incorreta!";
-            erro.style.display = "block";
-        }
-    })
-    .catch(err => {
-        console.error("Erro ao validar senha:", err);
-        erro.textContent = "Erro de conexão com o servidor.";
-        erro.style.display = "block";
-    });
-}
-
-function alternarVisibilidadeSenha() {
-    var input = document.getElementById("input-senha");
-    var icone = document.getElementById("toggle-senha");
-    if (input.type === "password") {
-        input.type = "text";
-        icone.textContent = "👁️"; 
-    } else {
-        input.type = "password";
-        icone.textContent = "👁️‍🗨️"; 
-    }
-}
-
-window.addEventListener("DOMContentLoaded", function() {
-    var jaLogado = sessionStorage.getItem("logado");
-    if (jaLogado === "true") {
-        document.getElementById("modal-senha").style.display = "none";
-    }
-
-    var inputSenha = document.getElementById("input-senha");
-    if (inputSenha) {
-        inputSenha.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                event.preventDefault(); 
-                verificarSenha(); 
-            }
-        });
-    }
-});
-    
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS7JUhF710rUDM8iYGoRTTqynPZ0yLFGJJtevtY7w_M-v0XAI6hRzDNEqvwTpEe2WcQQ/exec";
 
     let dadosGlobais = [];
     let subcapitulosMapAtual = {};
     let nomesCapitulosMapAtual = {};
 
-    window.onload = function() {
-      carregarDadosIniciais();
-    };
+    window.addEventListener("DOMContentLoaded", function() {
+      var jaLogado = sessionStorage.getItem("logado");
+      if (jaLogado === "true") {
+        document.getElementById("modal-senha").style.display = "none";
+        carregarDadosIniciais();
+      } else {
+        document.getElementById("modal-senha").style.display = "flex";
+      }
+
+      var inputSenha = document.getElementById("input-senha");
+      if (inputSenha) {
+        inputSenha.addEventListener("keypress", function(event) {
+          if (event.key === "Enter") {
+            event.preventDefault(); 
+            verificarSenha(); 
+          }
+        });
+      }
+    });
+
+    function verificarSenha() {
+      var digitada = document.getElementById("input-senha").value;
+      var erro = document.getElementById("erro-senha");
+      
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          funcao: "validarSenha",
+          senha: digitada
+        })
+      })
+      .then(response => response.json())
+      .then(resultado => {
+        if (resultado.status === "sucesso") {
+          sessionStorage.setItem("logado", "true");
+          document.getElementById("modal-senha").style.display = "none";
+          erro.style.display = "none";
+          carregarDadosIniciais();
+        } else {
+          erro.textContent = resultado.mensagem || "Senha incorreta!";
+          erro.style.display = "block";
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao validar senha:", err);
+        erro.textContent = "Erro de conexão com o servidor.";
+        erro.style.display = "block";
+      });
+    }
+
+    function alternarVisibilidadeSenha() {
+      var input = document.getElementById("input-senha");
+      var icone = document.getElementById("toggle-senha");
+      if (input.type === "password") {
+        input.type = "text";
+        icone.textContent = "👁️"; 
+      } else {
+        input.type = "password";
+        icone.textContent = "👁️‍🗨️"; 
+      }
+    }
 
     function abrirFluxogramaBackend() {
       document.getElementById("modalTitulo").innerText = "Arquitetura do Backend (Google Apps Script)";
@@ -683,7 +669,7 @@ window.addEventListener("DOMContentLoaded", function() {
       return '';
     }
 
-   function carregarDadosIniciais() {
+    function carregarDadosIniciais() {
       document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
       
       fetch(WEB_APP_URL + "?t=" + new Date().getTime(), { redirect: "follow", cache: "no-store" })
