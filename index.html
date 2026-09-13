@@ -755,19 +755,29 @@
             let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[capNum]) ? item.nomesCapitulosMap[capNum] : (item.nomeCapitulo || '');
             let capTexto = `${capNum}${capTot}` + (nomeCapCard ? `: ${nomeCapCard}` : '');
 
-            let pagInicialNum = parseFloat(item.paginaInicial) || 1;
-            let pagAtualNum = parseFloat(item.paginaAtual) || pagInicialNum;
+            // --- CÁLCULO DA BARRA DE PROGRESSO POR PÁGINAS ---
+            // Se a Página Inicial estiver vazia na planilha, assume 1 por padrão
+            let pagInicialNum = parseFloat(item.paginaInicial);
+            if (isNaN(pagInicialNum)) pagInicialNum = 1; 
+            
+            let pagAtualNum = parseFloat(item.paginaAtual) || 0;
             let pagTotalNum = parseFloat(item.totalPaginas) || 0;
             let percentual = 0;
 
-            let totalIntervalo = pagTotalNum - pagInicialNum;
-            let LidoIntervalo = pagAtualNum - pagInicialNum;
-
-            if (totalIntervalo > 0) {
-              percentual = (LidoIntervalo / totalIntervalo) * 100;
-              if (percentual > 100) percentual = 100;
-              if (percentual < 0) percentual = 0;
+            if (pagTotalNum > 0) {
+              // Adiciona +1 para incluir a página inicial como lida no cálculo
+              let totalPaginasVolume = (pagTotalNum - pagInicialNum) + 1;
+              let paginasLidas = (pagAtualNum - pagInicialNum) + 1;
+              
+              if (totalPaginasVolume > 0) {
+                percentual = (paginasLidas / totalPaginasVolume) * 100;
+              }
             }
+
+            // Trava os limites visuais da barra entre 0% e 100%
+            if (percentual > 100) percentual = 100;
+            if (percentual < 0) percentual = 0;
+            // --------------------------------------------------
 
             let imagemHtml = item.capaUrl ? `<div class="card-img-container"><img src="${item.capaUrl}" alt="Capa" onerror="this.style.display='none'"></div>` : "";
             let autorHtml = item.autor ? `<div class="card-autor">${item.autor}</div>` : "";
