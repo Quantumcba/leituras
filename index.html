@@ -683,15 +683,16 @@ window.addEventListener("DOMContentLoaded", function() {
       return '';
     }
 
-    function carregarDadosIniciais() {
+   function carregarDadosIniciais() {
       document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
       
-      fetch(WEB_APP_URL + "?t=" + new Date().getTime(), { 
-        redirect: "follow", 
-        cache: "no-store" 
-        })
+      fetch(WEB_APP_URL + "?t=" + new Date().getTime(), { redirect: "follow", cache: "no-store" })
         .then(response => response.json())
         .then(livros => {
+          if (!Array.isArray(livros)) {
+            throw new Error(livros.mensagem || "Erro retornado pelo servidor.");
+          }
+          
           document.getElementById("debugStatus").innerText = "";
           dadosGlobais = livros;
 
