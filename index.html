@@ -597,6 +597,38 @@
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
+    function abrirModal(item) {
+      document.getElementById("modalTitulo").innerText = item.livro;
+      document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
+      
+      let texto = "";
+      if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
+        let chaves = Object.keys(item.subcapitulosMap).sort((a, b) => Number(a) - Number(b));
+        let blocos = [];
+        chaves.forEach(cap => {
+          blocos.push(`<strong>Capítulo ${cap}:</strong>\n${item.subcapitulosMap[cap]}`);
+        });
+        texto = blocos.join("\n\n");
+      } else if (item.subcapitulos) {
+        texto = item.subcapitulos;
+      } else {
+        texto = "Nenhum subcapítulo registrado.";
+      }
+
+      document.getElementById("modalTextoSubcapitulos").innerHTML = texto.replace(/\n/g, "<br>");
+      document.getElementById("modalOverlay").style.display = "flex";
+    }
+
+    function fecharModal() {
+      document.getElementById("modalOverlay").style.display = "none";
+    }
+
+    function fecharModalFora(event) {
+      if (event.target.id === "modalOverlay") {
+        fecharModal();
+      }
+    }
+
     function confirmarExclusaoAtual() {
       let numLinha = document.getElementById("linhaPlanilha").value;
       if (!numLinha) {
@@ -782,7 +814,7 @@
       
       aoMudarCapituloAtual();
       
-      document.getElementById("txtObservacoes").value = dados.observacoes;
+      document.getElementById("txtObservacoes").value = dados.observacoes || "";
       document.getElementById("statusMsg").innerText = "";
       
       form.style.display = "block";
@@ -881,12 +913,17 @@
         paginaAtual: document.getElementById("novoPaginaAtual").value,
         totalPaginas: document.getElementById("novoTotalPaginas").value,
         capaUrl: document.getElementById("novoCapaUrl").value,
-        subcapitulos: document.getElementById("novoSubcapitulos").value,
         dataLeitura: converterParaBR(document.getElementById("novoData").value),
+        subcapitulos: document.getElementById("novoSubcapitulos").value,
         observacoes: document.getElementById("novoObservacoes").value
       };
 
-      document.getElementById("statusNovoMsg").innerText = "Cadastrando novo livro...";
+      if (!dadosEnvio.livro) {
+        alert("O nome do livro é obrigatório!");
+        return;
+      }
+
+      document.getElementById("statusNovoMsg").innerText = "Cadastrando...";
 
       fetch(WEB_APP_URL, {
         method: "POST",
@@ -903,41 +940,13 @@
             carregarDadosIniciais();
           }, 1000);
         } else {
-          document.getElementById("statusNovoMsg").innerText = "Erro: " + (resp.mensagem || "Erro desconhecido");
+          document.getElementById("statusNovoMsg").innerText = "Erro ao cadastrar: " + (resp.mensagem || "Erro desconhecido");
         }
       })
       .catch(err => {
         console.error("Erro:", err);
         document.getElementById("statusNovoMsg").innerText = "Erro de conexão ao cadastrar.";
       });
-    }
-
-    function abrirModal(item) {
-      document.getElementById("modalTitulo").innerText = item.livro || "Detalhes do Livro";
-      document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
-      
-      let textoSub = "";
-      if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
-        for (let cap in item.subcapitulosMap) {
-          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
-          textoSub += `Capítulo ${cap}${nomeCap}:\n${item.subcapitulosMap[cap]}\n\n`;
-        }
-      } else {
-        textoSub = item.subcapitulos || "Nenhum subcapítulo registrado.";
-      }
-      
-      document.getElementById("modalTextoSubcapitulos").innerText = textoSub.trim();
-      document.getElementById("modalOverlay").style.display = "flex";
-    }
-
-    function fecharModal() {
-      document.getElementById("modalOverlay").style.display = "none";
-    }
-
-    function fecharModalFora(event) {
-      if (event.target === document.getElementById("modalOverlay")) {
-        fecharModal();
-      }
     }
   </script>
 </body>
