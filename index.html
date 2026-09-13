@@ -369,13 +369,21 @@
 </head>
 <body>
   <!-- Tela de Login / Senha -->
+<!-- Tela de Login / Senha -->
 <div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
     <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
         <h3>🔒 Acesso Restrito</h3>
         <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Digite a senha para ver seus livros</p>
-        <input type="password" id="input-senha" placeholder="Sua senha" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; text-align: center; outline: none;">
-        <br>
-        <button onclick="verificarSenha()" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Entrar</button>
+        
+        <!-- Campo de senha com o ícone de olho embutido -->
+        <div style="position: relative; width: 100%; margin-bottom: 15px;">
+            <input type="password" id="input-senha" placeholder="Sua senha" style="width: 100%; padding: 10px 40px 10px 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; text-align: center; outline: none; box-sizing: border-box;">
+            <span id="toggle-senha" onclick="alternarVisibilidadeSenha()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; user-select: none;" title="Mostrar/Ocultar senha">👁️‍🗨️</span>
+        </div>
+
+        <!-- Botão Entrar menor -->
+        <button onclick="verificarSenha()" style="width: 120px; padding: 8px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">Entrar</button>
+        
         <p id="erro-senha" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Senha incorreta!</p>
     </div>
 </div>
@@ -519,15 +527,12 @@
 
   <script>
 
-    // Defina a sua senha aqui
-var SENHA_MEU_SITE = "12345"; // Troque pela senha que preferir
+    var SENHA_MEU_SITE = "12345"; // Troque pela senha que preferir
 
 function verificarSenha() {
     var digitada = document.getElementById("input-senha").value;
     if (digitada === SENHA_MEU_SITE) {
-        // Salva na sessão do navegador que já está logado
         sessionStorage.setItem("logado", "true");
-        // Esconde a tela de senha
         document.getElementById("modal-senha").style.display = "none";
     } else {
         var erro = document.getElementById("erro-senha");
@@ -535,12 +540,35 @@ function verificarSenha() {
     }
 }
 
-// Executa assim que a página carrega para checar se já foi autenticado nesta sessão
+// Função para alternar entre mostrar e esconder a senha com o olho
+function alternarVisibilidadeSenha() {
+    var input = document.getElementById("input-senha");
+    var icone = document.getElementById("toggle-senha");
+    if (input.type === "password") {
+        input.type = "text";
+        icone.textContent = "👁️"; // Olho aberto
+    } else {
+        input.type = "password";
+        icone.textContent = "👁️‍🗨️"; // Olho fechado / cortado
+    }
+}
+
+// Adiciona o ouvinte para detectar quando a tecla Enter for pressionada
 window.addEventListener("DOMContentLoaded", function() {
     var jaLogado = sessionStorage.getItem("logado");
     if (jaLogado === "true") {
-        // Se já digitou a senha antes nesta aba, esconde a tela de login na hora
         document.getElementById("modal-senha").style.display = "none";
+    }
+
+    // Escuta o evento de digitação no campo de senha
+    var inputSenha = document.getElementById("input-senha");
+    if (inputSenha) {
+        inputSenha.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault(); // Evita comportamento padrão
+                verificarSenha(); // Dispara o botão entrar
+            }
+        });
     }
 });
     
