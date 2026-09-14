@@ -7,10 +7,6 @@
     html, body {
       font-family: Arial, sans-serif;
       background-color: #0b0f19;
-      background-image: url('fundo.png');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
       margin: 0;
       padding: 0;
       color: #333;
@@ -21,54 +17,6 @@
       margin-bottom: 15px;
       color: #1a73e8;
     }
-
-    .btn-acao-modal {
-      width: 50px !important;
-      height: 50px !important;
-      min-width: 50px !important;
-      max-width: 50px !important;
-      min-height: 50px !important;
-      max-height: 50px !important;
-      flex: 0 0 50px !important;
-      aspect-ratio: 1 / 1 !important; 
-      border-radius: 50% !important;
-      font-size: 20px !important;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 2px 2px rgba(255,255,255,0.4), inset 0 -2px 3px rgba(0,0,0,0.3);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-      outline: none;
-      margin: 0 8px;
-      vertical-align: middle;
-      padding: 0 !important;
-    }
-
-    .btn-acao-modal:active {
-      transform: scale(0.95);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 2px rgba(0,0,0,0.4);
-    }
-
-    .btn-excluir-redondo {
-      background: radial-gradient(circle at 35% 35%, #ff4d4d 0%, #cc0000 60%, #990000 100%);
-      color: white;
-      border: 2px solid #e0e0e0;
-    }
-
-    .btn-salvar-redondo {
-      background: radial-gradient(circle at 35% 35%, #4da6ff 0%, #0066cc 60%, #004080 100%);
-      color: white;
-      border: 2px solid #e0e0e0;
-    }
-
-    .btn-cancelar-redondo {
-      background: radial-gradient(circle at 35% 35%, #b3b3b3 0%, #666666 60%, #404040 100%);
-      color: white;
-      border: 2px solid #e0e0e0;
-    }
-    
     .form-wrapper {
       max-width: 600px;
       margin: 20px auto;
@@ -345,11 +293,11 @@
       border-left: 4px solid #1e7e34;
       padding: 12px;
       margin-top: 10px;
-      font-family: Arial, sans-serif;
+      white-space: pre-line;
+      font-family: monospace;
       font-size: 13px;
       color: #333;
       border-radius: 0 4px 4px 0;
-      line-height: 1.5;
     }
     @media (min-width: 850px) {
       .cards-container {
@@ -363,28 +311,7 @@
   </style>
 </head>
 <body>
-  <!-- Tela de Login / Senha -->
-  <div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
-    <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
-        <h3>🔒 Acesso Restrito</h3>
-        <p style="font-size: 14px; color: #aaa; margin-bottom: 20px;">Digite a senha para ver seus livros</p>
-        
-        <div style="position: relative; width: 100%; margin-bottom: 15px;">
-            <input type="password" id="input-senha" placeholder="Sua senha" style="width: 100%; padding: 10px 40px 10px 10px; border-radius: 6px; border: 1px solid #444; background: #333; color: white; text-align: center; outline: none; box-sizing: border-box;">
-            <span id="toggle-senha" onclick="alternarVisibilidadeSenha()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 16px; user-select: none;" title="Mostrar/Ocultar senha">👁️‍🗨️</span>
-        </div>
 
-        <button onclick="verificarSenha()" style="width: 120px; padding: 8px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;">Entrar</button>
-        
-        <p id="erro-senha" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Senha incorreta!</p>
-    </div>
-  </div>
-  
-  <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
-    <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
-    
-    <button onclick="abrirFluxogramaBackend()" style="position: absolute; right: 15px; top: 25px; width: 36px; height: 36px; border-radius: 50%; background-color: #1a73e8; color: white; border: none; font-weight: bold; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3);" title="Como funciona o Backend?">?</button>
-  </div>
   <div id="debugStatus" class="erro-msg" style="text-align:center; padding: 20px;"></div>
 
   <div class="form-wrapper" id="formContainer" style="display:none;">
@@ -401,7 +328,7 @@
     <input type="text" id="txtLivro" disabled style="background-color: #e8f5e9; color: #0f5132; font-weight: bold; border: 1px solid #c3e6cb;">
 
     <label>Nome do Capítulo:</label>
-    <input type="text" id="txtNomeCapitulo" placeholder="Ex: Introdução" oninput="aoDigitarNomeCapitulo()">
+    <input type="text" id="txtNomeCapitulo" placeholder="Ex: Introdução" oninput="atualizarRotuloSubcapitulo()">
 
     <div class="row-edit-compact">
       <div>
@@ -419,15 +346,14 @@
     </div>
 
     <label id="lblSubcapitulos" style="margin-top: 6px; display: block;">Subcapítulos do Capítulo:</label>
-    <textarea id="txtSubcapitulos" placeholder="Digite apenas os subcapítulos..." oninput="aoDigitarSubcapitulos()"></textarea>
+    <textarea id="txtSubcapitulos" placeholder="Digite os subcapítulos..."></textarea>
 
     <label>Observações:</label>
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
 
-    <div class="form-buttons" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center;">
-      <button type="button" onclick="atualizarPlanilha()" class="btn-acao-modal btn-salvar-redondo" title="Salvar Atualizações">💾</button>
-      <button type="button" onclick="confirmarExclusaoAtual()" class="btn-acao-modal btn-excluir-redondo" title="Excluir Livro">🗑️</button>
-      <button type="button" onclick="fecharFormularios()" class="btn-acao-modal btn-cancelar-redondo" title="Cancelar">↩️</button>
+    <div class="form-buttons">
+      <button onclick="atualizarPlanilha()">Salvar Atualizações</button>
+      <button class="btn-cancelar" onclick="fecharFormularios()">Cancelar</button>
     </div>
     <div id="statusMsg" class="msg"></div>
   </div>
@@ -506,180 +432,21 @@
       <span class="modal-close" onclick="fecharModal()">&times;</span>
       <h3 id="modalTitulo" style="color: #1a73e8; margin-top: 0;">Título do Livro</h3>
       <div id="modalAutor" style="font-weight: bold; color: #1e7e34; margin-bottom: 12px; font-size: 14px;"></div>
-      <p style="font-weight: bold; color: #555; margin-bottom: 5px;">Estrutura dos Capítulos:</p>
+      <p style="font-weight: bold; color: #555; margin-bottom: 5px;">Subcapítulos por Capítulo:</p>
       <div class="modal-subcapitulos" id="modalTextoSubcapitulos">Nenhum subcapítulo registrado.</div>
     </div>
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS7JUhF710rUDM8iYGoRTTqynPZ0yLFGJJtevtY7w_M-v0XAI6hRzDNEqvwTpEe2WcQQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwv3ObZEx7Wy8EHn6b4d9mq1L2GGmpvvGRMsF1PmT53j58SGS4c64pOYA51stlbC5mlSA/exec";
 
     let dadosGlobais = [];
     let subcapitulosMapAtual = {};
     let nomesCapitulosMapAtual = {};
 
-    window.addEventListener("DOMContentLoaded", function() {
-      var jaLogado = sessionStorage.getItem("logado");
-      if (jaLogado === "true") {
-        document.getElementById("modal-senha").style.display = "none";
-        carregarDadosIniciais();
-      } else {
-        document.getElementById("modal-senha").style.display = "flex";
-      }
-
-      var inputSenha = document.getElementById("input-senha");
-      if (inputSenha) {
-        inputSenha.addEventListener("keypress", function(event) {
-          if (event.key === "Enter") {
-            event.preventDefault(); 
-            verificarSenha(); 
-          }
-        });
-      }
-    });
-
-    function verificarSenha() {
-      var digitada = document.getElementById("input-senha").value;
-      var erro = document.getElementById("erro-senha");
-      
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          funcao: "validarSenha",
-          senha: digitada
-        })
-      })
-      .then(response => response.json())
-      .then(resultado => {
-        if (resultado.status === "sucesso") {
-          sessionStorage.setItem("logado", "true");
-          document.getElementById("modal-senha").style.display = "none";
-          erro.style.display = "none";
-          carregarDadosIniciais();
-        } else {
-          erro.textContent = resultado.mensagem || "Senha incorreta!";
-          erro.style.display = "block";
-        }
-      })
-      .catch(err => {
-        console.error("Erro ao validar senha:", err);
-        erro.textContent = "Erro de conexão com o servidor.";
-        erro.style.display = "block";
-      });
-    }
-
-    function alternarVisibilidadeSenha() {
-      var input = document.getElementById("input-senha");
-      var icone = document.getElementById("toggle-senha");
-      if (input.type === "password") {
-        input.type = "text";
-        icone.textContent = "👁️"; 
-      } else {
-        input.type = "password";
-        icone.textContent = "👁️‍🗨️"; 
-      }
-    }
-
-    function abrirFluxogramaBackend() {
-      document.getElementById("modalTitulo").innerText = "Arquitetura do Backend (Google Apps Script)";
-      document.getElementById("modalAutor").innerText = "Fluxograma lógico da API";
-      
-      let htmlConteudo = `
-        <p style="margin-bottom: 10px; color: #555; font-size: 14px;">Este é o fluxo de como o site no GitHub Pages comunica com o script no Google Sheets:</p>
-        <div style="text-align: center; background: #f8f9fa; padding: 10px; border-radius: 6px; border: 1px solid #eee;">
-          <img src="backend.png" alt="Fluxograma Backend" style="max-width: 100%; height: auto; border-radius: 4px;" onerror="this.src='https://via.placeholder.com/450x200?text=backend.png+não+encontrada';">
-        </div>
-      `;
-
-      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo;
-      document.getElementById("modalOverlay").style.display = "flex";
-    }
-
-    function abrirModal(item) {
-      document.getElementById("modalTitulo").innerText = item.livro;
-      document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
-      
-      let capAtualStr = String(item.capituloAtual || '').trim();
-      let textoHtml = "";
-
-      if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
-        let chaves = Object.keys(item.subcapitulosMap).sort((a, b) => Number(a) - Number(b));
-        let blocos = [];
-        chaves.forEach(cap => {
-          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? item.nomesCapitulosMap[cap] : "";
-          let tituloCap = `Capítulo ${cap}` + (nomeCap ? `: ${nomeCap}` : "");
-          
-          let ehCapituloAtual = (String(cap).trim() === capAtualStr);
-          
-          let headerHtml = ehCapituloAtual 
-            ? `<div style="color: #1e7e34; font-weight: bold; font-size: 14px; background-color: #e8f5e9; padding: 4px 8px; border-radius: 4px; border-left: 3px solid #28a745; margin-bottom: 4px;">📍 ${tituloCap} (Atual)</div>`
-            : `<div style="color: #333; font-weight: bold; font-size: 14px; margin-bottom: 4px;">${tituloCap}</div>`;
-            
-          let conteudoSub = item.subcapitulosMap[cap] ? item.subcapitulosMap[cap].replace(/\n/g, "<br>") : "<em style='color: #888;'>(Nenhum subcapítulo registrado)</em>";
-
-          blocos.push(`${headerHtml}<div style="padding-left: 10px; margin-bottom: 12px; color: #444;">${conteudoSub}</div>`);
-        });
-        textoHtml = blocos.join("");
-      } else if (item.subcapitulos) {
-        textoHtml = item.subcapitulos.replace(/\n/g, "<br>");
-      } else {
-        textoHtml = "Nenhum subcapítulo registrado.";
-      }
-
-      document.getElementById("modalTextoSubcapitulos").innerHTML = textoHtml;
-      document.getElementById("modalOverlay").style.display = "flex";
-    }
-
-    function fecharModal() {
-      document.getElementById("modalOverlay").style.display = "none";
-    }
-
-    function fecharModalFora(event) {
-      if (event.target.id === "modalOverlay") {
-        fecharModal();
-      }
-    }
-
-    function confirmarExclusaoAtual() {
-      let numLinha = document.getElementById("linhaPlanilha").value;
-      if (!numLinha) {
-        alert("Erro: Não foi possível identificar o livro a ser excluído.");
-        return;
-      }
-      
-      if (confirm("Tem certeza de que deseja apagar este livro? Esta ação não poderá ser desfeita.")) {
-        excluirLivroBackend(numLinha);
-      }
-    }
-
-    function excluirLivroBackend(numLinha) {
-      document.getElementById("statusMsg").innerText = "Excluindo...";
-      
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ funcao: "excluirLivro", linha: numLinha })
-      })
-      .then(response => response.json())
-      .then(resultado => {
-        if (resultado.status === "sucesso") {
-          alert("Livro excluído com sucesso!");
-          fecharFormularios(); 
-          carregarDadosIniciais(); 
-        } else {
-          alert("Erro ao excluir: " + resultado.mensagem);
-          document.getElementById("statusMsg").innerText = "";
-        }
-      })
-      .catch(erro => {
-        console.error("Erro:", erro);
-        alert("Erro de conexão ao tentar excluir.");
-        document.getElementById("statusMsg").innerText = "";
-      });
-    }
+    window.onload = function() {
+      carregarDadosIniciais();
+    };
 
     function converterParaBR(dataIso) {
       if (!dataIso) return "";
@@ -717,13 +484,9 @@
     function carregarDadosIniciais() {
       document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
       
-      fetch(WEB_APP_URL + "?t=" + new Date().getTime(), { redirect: "follow", cache: "no-store" })
+      fetch(WEB_APP_URL, { redirect: "follow" })
         .then(response => response.json())
         .then(livros => {
-          if (!Array.isArray(livros)) {
-            throw new Error(livros.mensagem || "Erro retornado pelo servidor.");
-          }
-          
           document.getElementById("debugStatus").innerText = "";
           dadosGlobais = livros;
 
@@ -749,39 +512,26 @@
             };
 
             let dataVisual = formatarDataTela(item.dataExibicao || item.dataIso);
+            let capTexto = item.totalCapitulos ? `${item.capituloAtual || '-'} / ${item.totalCapitulos}` : (item.capituloAtual || '-');
             
-            let capNum = item.capituloAtual || '-';
-            let capTot = item.totalCapitulos ? ` / ${item.totalCapitulos}` : '';
-            let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[capNum]) ? item.nomesCapitulosMap[capNum] : (item.nomeCapitulo || '');
+            let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[item.capituloAtual]) ? item.nomesCapitulosMap[item.capituloAtual] : item.nomeCapitulo;
+            if (nomeCapCard) capTexto += ` (${nomeCapCard})`;
 
-            // Estilo do realce: fundo verde claro, texto verde escuro, bordas arredondadas
-            let spanRealce = nomeCapCard ? `<span style="background-color: #e8f5e9; color: #1e7e34; padding: 2px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; margin-left: 6px; border: 1px solid #c3e6cb; display: inline-block; vertical-align: middle;">${nomeCapCard}</span>` : '';
-
-            let capTexto = `${capNum}${capTot}${spanRealce}`;
-
-            // --- CÁLCULO DA BARRA DE PROGRESSO POR PÁGINAS ---
-            // Se a Página Inicial estiver vazia na planilha, assume 1 por padrão
-            let pagInicialNum = parseFloat(item.paginaInicial);
-            if (isNaN(pagInicialNum)) pagInicialNum = 1; 
-            
-            let pagAtualNum = parseFloat(item.paginaAtual) || 0;
+            let pagInicialNum = parseFloat(item.paginaInicial) || 1;
+            let pagAtualNum = parseFloat(item.paginaAtual) || pagInicialNum;
             let pagTotalNum = parseFloat(item.totalPaginas) || 0;
             let percentual = 0;
 
-            if (pagTotalNum > 0) {
-              // Adiciona +1 para incluir a página inicial como lida no cálculo
-              let totalPaginasVolume = (pagTotalNum - pagInicialNum) + 1;
-              let paginasLidas = (pagAtualNum - pagInicialNum) + 1;
-              
-              if (totalPaginasVolume > 0) {
-                percentual = (paginasLidas / totalPaginasVolume) * 100;
-              }
+            let totalIntervalo = pagTotalNum - pagInicialNum;
+            let LidoIntervalo = pagAtualNum - pagInicialNum;
+
+            if (totalIntervalo > 0) {
+              percentual = (LidoIntervalo / totalIntervalo) * 100;
+              if (percentual > 100) percentual = 100;
+              if (percentual < 0) percentual = 0;
             }
 
-            // Trava os limites visuais da barra entre 0% e 100%
-            if (percentual > 100) percentual = 100;
-            if (percentual < 0) percentual = 0;
-            // --------------------------------------------------
+            let pagTextoExibicao = item.totalPaginas ? `${item.paginaAtual || '-'} / ${item.totalPaginas}` : (item.paginaAtual || '-');
 
             let imagemHtml = item.capaUrl ? `<div class="card-img-container"><img src="${item.capaUrl}" alt="Capa" onerror="this.style.display='none'"></div>` : "";
             let autorHtml = item.autor ? `<div class="card-autor">${item.autor}</div>` : "";
@@ -800,7 +550,7 @@
               </div>
               <div class="progress-text">${percentual.toFixed(0)}% concluído</div>
               <p style="margin-top:10px;"><strong>Data:</strong> ${dataVisual}</p>
-              <p style="color: #003366;"><strong>Página atual:</strong> ${item.paginaAtual || '-'}</p>
+              <p style="color: #003366;"><strong>Página atual:</strong> ${pagTextoExibicao}</p>
               <p><strong>Obs:</strong> ${item.observacoes || '-'}</p>
             `;
             cardsContainer.appendChild(card);
@@ -833,16 +583,16 @@
       document.getElementById("txtPaginaInicial").value = dados.paginaInicial || "";
       document.getElementById("txtTotalPaginas").value = dados.totalPaginas || "";
       document.getElementById("txtTotalCapitulos").value = dados.totalCapitulos || "";
-      document.getElementById("txtCapituloAtual").value = dados.capituloAtual || "";
-      document.getElementById("txtPaginaAtual").value = dados.paginaAtual || "";
+      document.getElementById("txtCapituloAtual").value = dados.capituloAtual;
+      document.getElementById("txtPaginaAtual").value = dados.paginaAtual;
       document.getElementById("txtData").value = formatarDataIso(dados.dataIso || dados.dataExibicao);
       
-      subcapitulosMapAtual = Object.assign({}, dados.subcapitulosMap || {});
-      nomesCapitulosMapAtual = Object.assign({}, dados.nomesCapitulosMap || {});
+      subcapitulosMapAtual = dados.subcapitulosMap || {};
+      nomesCapitulosMapAtual = dados.nomesCapitulosMap || {};
       
       aoMudarCapituloAtual();
       
-      document.getElementById("txtObservacoes").value = dados.observacoes || "";
+      document.getElementById("txtObservacoes").value = dados.observacoes;
       document.getElementById("statusMsg").innerText = "";
       
       form.style.display = "block";
@@ -858,44 +608,10 @@
     }
 
     function aoMudarCapituloAtual() {
-  let cap = document.getElementById("txtCapituloAtual").value.trim();
-  
-  let nomeCap = "";
-  // 1. Tenta pegar o nome já mapeado
-  if (cap && nomesCapitulosMapAtual[cap]) {
-    nomeCap = nomesCapitulosMapAtual[cap];
-  } 
-  // 2. Se estiver vazio, tenta extrair da primeira linha dos subcapítulos deste capítulo
-  else if (cap && subcapitulosMapAtual[cap]) {
-    let linhas = subcapitulosMapAtual[cap].split('\n').filter(l => l.trim() !== "");
-    if (linhas.length > 0) {
-      // Se a primeira linha NÃO começar com número (ex: 2.1), assumimos que é o Título
-      if (!/^\d+\.\d+/.test(linhas[0])) {
-        nomeCap = linhas[0].trim();
-        nomesCapitulosMapAtual[cap] = nomeCap; // Salva para não precisar ler de novo
-      }
-    }
-  }
-  
-  document.getElementById("txtNomeCapitulo").value = nomeCap;
-  document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
-  
-  atualizarRotuloSubcapitulo();
-}
-    
-    function aoDigitarNomeCapitulo() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
-      if (cap) {
-        nomesCapitulosMapAtual[cap] = document.getElementById("txtNomeCapitulo").value;
-      }
+      document.getElementById("txtNomeCapitulo").value = (cap && nomesCapitulosMapAtual[cap] !== undefined) ? nomesCapitulosMapAtual[cap] : "";
+      document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
       atualizarRotuloSubcapitulo();
-    }
-
-    function aoDigitarSubcapitulos() {
-      let cap = document.getElementById("txtCapituloAtual").value.trim();
-      if (cap) {
-        subcapitulosMapAtual[cap] = document.getElementById("txtSubcapitulos").value;
-      }
     }
 
     function mostrarFormNovo() {
@@ -921,12 +637,6 @@
     }
 
     function atualizarPlanilha() {
-      let cap = document.getElementById("txtCapituloAtual").value.trim();
-      if (cap) {
-        nomesCapitulosMapAtual[cap] = document.getElementById("txtNomeCapitulo").value;
-        subcapitulosMapAtual[cap] = document.getElementById("txtSubcapitulos").value;
-      }
-
       let dadosEnvio = {
         funcao: "salvarDados",
         linha: document.getElementById("linhaPlanilha").value,
@@ -948,46 +658,37 @@
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, 
         body: JSON.stringify(dadosEnvio)
       })
-      .then(response => response.json())
+      .then(res => res.json())
       .then(resp => {
-        if (resp.status === "sucesso") {
-          document.getElementById("statusMsg").innerText = "Salvo com sucesso!";
-          setTimeout(() => {
-            fecharFormularios();
-            carregarDadosIniciais();
-          }, 1000);
-        } else {
-          document.getElementById("statusMsg").innerText = "Erro ao salvar: " + (resp.mensagem || "Erro desconhecido");
-        }
+        fecharFormularios();
+        carregarDadosIniciais();
       })
       .catch(err => {
-        console.error("Erro:", err);
-        document.getElementById("statusMsg").innerText = "Erro de conexão ao salvar.";
+        document.getElementById("statusMsg").innerText = "Erro ao salvar: " + err.message;
       });
     }
 
     function salvarNovoLivro() {
       let dadosEnvio = {
-        funcao: "inserirLivro",
+        funcao: "adicionarLivro",
         livro: document.getElementById("novoLivro").value,
         autor: document.getElementById("novoAutor").value,
         capituloAtual: document.getElementById("novoCapituloAtual").value,
-        totalCapitulos: document.getElementById("novoTotalCapitulos").value,
         nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
+        totalCapitulos: document.getElementById("novoTotalCapitulos").value,
         paginaInicial: document.getElementById("novoPaginaInicial").value,
         paginaAtual: document.getElementById("novoPaginaAtual").value,
         totalPaginas: document.getElementById("novoTotalPaginas").value,
         capaUrl: document.getElementById("novoCapaUrl").value,
         dataLeitura: converterParaBR(document.getElementById("novoData").value),
-        subcapitulos: document.getElementById("novoSubcapitulos").value,
-        observacoes: document.getElementById("novoObservacoes").value
+        observacoes: document.getElementById("novoObservacoes").value,
+        subcapitulos: document.getElementById("novoSubcapitulos").value
       };
 
       if (!dadosEnvio.livro) {
-        alert("O nome do livro é obrigatório!");
+        alert("Por favor, digite o nome do livro!");
         return;
       }
 
@@ -996,25 +697,55 @@
       fetch(WEB_APP_URL, {
         method: "POST",
         redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(dadosEnvio)
       })
-      .then(response => response.json())
+      .then(res => res.json())
       .then(resp => {
-        if (resp.status === "sucesso") {
-          document.getElementById("statusNovoMsg").innerText = "Livro cadastrado com sucesso!";
-          setTimeout(() => {
-            fecharFormularios();
-            carregarDadosIniciais();
-          }, 1000);
-        } else {
-          document.getElementById("statusNovoMsg").innerText = "Erro ao cadastrar: " + (resp.mensagem || "Erro desconhecido");
-        }
+        fecharFormularios();
+        carregarDadosIniciais();
       })
       .catch(err => {
-        console.error("Erro:", err);
-        document.getElementById("statusNovoMsg").innerText = "Erro de conexão ao cadastrar.";
+        document.getElementById("statusNovoMsg").innerText = "Erro ao cadastrar: " + err.message;
       });
+    }
+    
+    function abrirModal(item) {
+      document.getElementById("modalTitulo").innerText = item.livro;
+      document.getElementById("modalAutor").innerText = item.autor ? `Autor: ${item.autor}` : "";
+      
+      let mapSub = item.subcapitulosMap || {};
+      let mapNome = item.nomesCapitulosMap || {};
+      let chavesSet = new Set([...Object.keys(mapSub), ...Object.keys(mapNome)]);
+      let chaves = Array.from(chavesSet).sort((a, b) => parseInt(a) - parseInt(b));
+      
+      let htmlConteudo = "";
+      if (chaves.length > 0) {
+        chaves.forEach(cap => {
+          let nomeDoCap = mapNome[cap] ? ` - ${mapNome[cap]}` : ((cap == item.capituloAtual && item.nomeCapitulo) ? ` - ${item.nomeCapitulo}` : "");
+          let subTexto = mapSub[cap] || "Nenhum subcapítulo registrado.";
+          let eCapituloAtual = (String(cap) === String(item.capituloAtual));
+          let cabecalhoTexto = `[ Capítulo ${cap}${nomeDoCap} ]`;
+          
+          if (eCapituloAtual) {
+            htmlConteudo += `<strong style="color: #28a745;">${cabecalhoTexto}</strong>\n${subTexto}\n\n`;
+          } else {
+            htmlConteudo += `${cabecalhoTexto}\n${subTexto}\n\n`;
+          }
+        });
+      } else {
+        htmlConteudo = "Nenhum dado registrado para este livro.";
+      }
+
+      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlConteudo.trim();
+      document.getElementById("modalOverlay").style.display = "flex";
+    }
+
+    function fecharModal() {
+      document.getElementById("modalOverlay").style.display = "none";
+    }
+
+    function fecharModalFora(event) {
+      if (event.target === document.getElementById("modalOverlay")) fecharModal();
     }
   </script>
 </body>
