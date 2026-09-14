@@ -345,6 +345,7 @@
       border-left: 4px solid #1e7e34;
       padding: 12px;
       margin-top: 10px;
+      white-space: pre-line;
       font-family: monospace;
       font-size: 13px;
       color: #333;
@@ -706,9 +707,7 @@
             let capTexto = item.totalCapitulos ? `${item.capituloAtual || '-'} / ${item.totalCapitulos}` : (item.capituloAtual || '-');
             
             let nomeCapCard = (item.nomesCapitulosMap && item.nomesCapitulosMap[item.capituloAtual]) ? item.nomesCapitulosMap[item.capituloAtual] : item.nomeCapitulo;
-            if (nomeCapCard) {
-              capTexto += ` <span style="background-color: #d4edda; color: #155724; padding: 2px 10px; border-radius: 12px; font-size: 13px; font-weight: bold; margin-left: 5px; border: 1px solid #c3e6cb;">${nomeCapCard}</span>`;
-            }
+            if (nomeCapCard) capTexto += ` (${nomeCapCard})`;
 
             let pagInicialNum = parseFloat(item.paginaInicial) || 1;
             let pagAtualNum = parseFloat(item.paginaAtual) || pagInicialNum;
@@ -723,8 +722,6 @@
               if (percentual > 100) percentual = 100;
               if (percentual < 0) percentual = 0;
             }
-
-            let pagTextoExibicao = item.totalPaginas ? `${item.paginaAtual || '-'} / ${item.totalPaginas}` : (item.paginaAtual || '-');
 
             let imagemHtml = item.capaUrl ? `<div class="card-img-container"><img src="${item.capaUrl}" alt="Capa" onerror="this.style.display='none'"></div>` : "";
             let autorHtml = item.autor ? `<div class="card-autor">${item.autor}</div>` : "";
@@ -743,7 +740,7 @@
               </div>
               <div class="progress-text">${percentual.toFixed(0)}% concluído</div>
               <p style="margin-top:10px;"><strong>Data:</strong> ${dataVisual}</p>
-              <p style="color: #003366;"><strong>Página atual:</strong> ${pagTextoExibicao}</p>
+              <p style="color: #003366;"><strong>Página atual:</strong> ${item.paginaAtual || '-'}</p>
               <p><strong>Obs:</strong> ${item.observacoes || '-'}</p>
             `;
             cardsContainer.appendChild(card);
@@ -919,31 +916,17 @@
       document.getElementById("modalTitulo").innerText = item.livro || "Detalhes do Livro";
       document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
       
-      let htmlSub = "";
+      let textoSub = "";
       if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
-        let capitulos = Object.keys(item.subcapitulosMap).sort((a, b) => parseInt(a) - parseInt(b));
-        
-        capitulos.forEach(cap => {
-          let texto = item.subcapitulosMap[cap];
-          // Substitui quebras de linha para exibir corretamente no HTML
-          let textoFormatado = texto ? texto.replace(/\n/g, '<br>') : "";
-          let nomeDoCapitulo = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
-          
-          let tituloCapitulo = `Capítulo ${cap}${nomeDoCapitulo}:`;
-          
-          if (cap == item.capituloAtual) {
-            htmlSub += `<div style="color: #1e7e34; font-weight: bold; margin-bottom: 12px;">${tituloCapitulo}<br>${textoFormatado}</div>`;
-          } else {
-            htmlSub += `<div style="margin-bottom: 12px;">${tituloCapitulo}<br>${textoFormatado}</div>`;
-          }
-        });
+        for (let cap in item.subcapitulosMap) {
+          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
+          textoSub += `Capítulo ${cap}${nomeCap}:\n${item.subcapitulosMap[cap]}\n\n`;
+        }
       } else {
-        let subFallback = item.subcapitulos || "Nenhum subcapítulo registrado.";
-        htmlSub = `<div>${subFallback.replace(/\n/g, '<br>')}</div>`;
+        textoSub = item.subcapitulos || "Nenhum subcapítulo registrado.";
       }
       
-      // Importante: Alterado de .innerText para .innerHTML para que as tags (como o div verde e os <br>) sejam lidas pelo navegador!
-      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlSub;
+      document.getElementById("modalTextoSubcapitulos").innerText = textoSub.trim();
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
