@@ -800,12 +800,30 @@
     }
 
     function aoMudarCapituloAtual() {
-      let cap = document.getElementById("txtCapituloAtual").value.trim();
-      document.getElementById("txtNomeCapitulo").value = (cap && nomesCapitulosMapAtual[cap] !== undefined) ? nomesCapitulosMapAtual[cap] : "";
-      document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
-      atualizarRotuloSubcapitulo();
+  let cap = document.getElementById("txtCapituloAtual").value.trim();
+  
+  let nomeCap = "";
+  // 1. Tenta pegar o nome já mapeado
+  if (cap && nomesCapitulosMapAtual[cap]) {
+    nomeCap = nomesCapitulosMapAtual[cap];
+  } 
+  // 2. Se estiver vazio, tenta extrair da primeira linha dos subcapítulos deste capítulo
+  else if (cap && subcapitulosMapAtual[cap]) {
+    let linhas = subcapitulosMapAtual[cap].split('\n').filter(l => l.trim() !== "");
+    if (linhas.length > 0) {
+      // Se a primeira linha NÃO começar com número (ex: 2.1), assumimos que é o Título
+      if (!/^\d+\.\d+/.test(linhas[0])) {
+        nomeCap = linhas[0].trim();
+        nomesCapitulosMapAtual[cap] = nomeCap; // Salva para não precisar ler de novo
+      }
     }
-
+  }
+  
+  document.getElementById("txtNomeCapitulo").value = nomeCap;
+  document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
+  
+  atualizarRotuloSubcapitulo();
+}
     function mostrarFormNovo() {
       fecharFormularios();
       document.getElementById("fabBtn").classList.add("hidden");
