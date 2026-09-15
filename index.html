@@ -379,7 +379,26 @@
         <p id="erro-senha" style="color: #ff4d4d; font-size: 12px; margin-top: 10px; display: none;">Senha incorreta!</p>
     </div>
   </div>
-  
+  <!-- Botão do Menu Hambúrguer (Fixo no canto superior direito) -->
+<button onclick="abrirSidebarEstudos()" style="position: fixed; top: 15px; right: 15px; z-index: 999; background: #6f42c1; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+  ☰
+</button>
+
+<!-- Fundo escurecido ao abrir o menu -->
+<div id="sidebarOverlay" onclick="fecharSidebarEstudos()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;"></div>
+
+<!-- Gaveta Lateral (Sidebar Right) -->
+<div id="sidebarEstudos" style="position:fixed; top:0; right:-350px; width:320px; height:100%; background:#ffffff; z-index:1001; box-shadow:-3px 0 10px rgba(0,0,0,0.2); transition: right 0.3s ease; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #6f42c1; padding-bottom:10px; margin-bottom:15px;">
+    <h3 style="margin:0; color:#6f42c1; font-size: 18px;">📚 Registros de Estudos</h3>
+    <span onclick="fecharSidebarEstudos()" style="cursor:pointer; font-size:24px; font-weight:bold; color:#888;">&times;</span>
+  </div>
+
+  <!-- Onde os registros serão renderizados -->
+  <div id="listaEstudosContainer">
+    <p style="text-align:center; color:#666;">Carregando registros...</p>
+  </div>
+</div>
   <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
     <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
     
@@ -1061,6 +1080,59 @@
         document.getElementById("statusEstudoMsg").className = "erro-msg";
       });
     }
+    function abrirSidebarEstudos() {
+  document.getElementById("sidebarEstudos").style.right = "0px";
+  document.getElementById("sidebarOverlay").style.display = "block";
+  carregarEstudos();
+}
+
+function fecharSidebarEstudos() {
+  document.getElementById("sidebarEstudos").style.right = "-350px";
+  document.getElementById("sidebarOverlay").style.display = "none";
+}
+
+function carregarEstudos() {
+  const container = document.getElementById("listaEstudosContainer");
+  container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando...</p>";
+
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ funcao: "obterEstudos" })
+  })
+  .then(res => res.json())
+  .then(estudos => {
+    if (!Array.isArray(estudos) || estudos.length === 0) {
+      container.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum registro de estudo encontrado.</p>";
+      return;
+    }
+
+    let html = "";
+    estudos.forEach(item => {
+      const foiConcluido = item.concluido.toLowerCase() === "sim";
+      const corStatus = foiConcluido ? "#28a745" : "#ffc107";
+      const textoStatus = foiConcluido ? "✓ Concluído" : "⏳ Pendente";
+
+      html += `
+        <div style="background: #f8f9fa; border-left: 4px solid ${corStatus}; border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="font-weight: bold; color: #333; margin-bottom: 4px; font-size: 14px;">${item.assunto}</div>
+          <div style="font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-top: 6px;">
+            <span>📅 ${item.data || '---'}</span>
+            <span>⏰ ${item.horario || '---'}</span>
+          </div>
+          <div style="margin-top: 8px; font-size: 12px; font-weight: bold; color: ${corStatus};">
+            ${textoStatus}
+          </div>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = "<p style='color:red; text-align:center;'>Erro ao carregar registros.</p>";
+  });
+}
   </script>
 </body>
 </html>
