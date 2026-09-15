@@ -423,9 +423,16 @@
       <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-size: 12px; font-family: monospace; overflow-x: auto; line-height: 1.4;">
 [ Site no GitHub Pages (Frontend) ]
 │
-├── Requisição GET (Carregar Dados do Site)
-│   └── [ doGet(e) ]
-...
+├── Requisição GET (Carregar Dados)
+│   └── [ doGet(e) ] -> Retorna JSON com os livros
+│
+└── Requisições POST (Ações de Cadastro/Edição)
+    ├── [ validarSenha ] -> Libera o site
+    ├── [ inserirEstudo ] -> Cria novo registro de estudo
+    ├── [ obterEstudos ] -> Retorna JSON dos estudos
+    ├── [ salvarDados ] -> Atualiza dados do livro
+    ├── [ inserirLivro ] -> Cadastra um livro novo
+    └── [ excluirLivro ] -> Deleta o livro da planilha
       </pre>
     </div>
   </div>
@@ -592,6 +599,7 @@
   </div>
 
   <script>
+    // ********* LEMBRE-SE DE TROCAR ESTA URL PELA NOVA APÓS IMPLANTAR! *********
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS7JUhF710rUDM8iYGoRTTqynPZ0yLFGJJtevtY7w_M-v0XAI6hRzDNEqvwTpEe2WcQQ/exec";
 
     let dadosGlobais = [];
@@ -666,7 +674,7 @@
     function abrirSidebarEstudos() {
       document.getElementById("sidebarEstudos").style.left = "0px";
       document.getElementById("sidebarOverlay").style.display = "block";
-      carregarEstudos(); // Correção: Chamando a função de carregar os estudos ao abrir a sidebar
+      carregarEstudos();
     }
 
     function fecharSidebarEstudos() {
@@ -674,7 +682,6 @@
       document.getElementById("sidebarOverlay").style.display = "none";
     }
 
-    // Correção: Função adicionada para realizar a requisição POST e exibir os registros
     function carregarEstudos() {
       let container = document.getElementById("listaEstudosContainer");
       container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando registros...</p>";
@@ -915,20 +922,18 @@
       document.getElementById("formContainer").style.display = "block";
       document.getElementById("fabBtn").classList.add("hidden");
 
-      // Correção: Rolar a página suavemente para o topo onde está o formulário
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-   function aoMudarCapituloAtual() {
+    function aoMudarCapituloAtual() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
       let txtSub = document.getElementById("txtSubcapitulos");
       let txtNome = document.getElementById("txtNomeCapitulo");
       
       if (cap && subcapitulosMapAtual[cap]) {
         let conteudo = subcapitulosMapAtual[cap];
-        txtSub.value = conteudo; // Mantém todo o texto no campo de subcapítulos
+        txtSub.value = conteudo;
         
-        // Pega apenas a primeira linha do conteúdo para o Nome do Capítulo
         let primeiraLinha = conteudo.split('\n')[0].trim();
         txtNome.value = primeiraLinha;
       } else {
@@ -949,7 +954,7 @@
       }
     }
 
-function abrirModal(item) {
+    function abrirModal(item) {
       document.getElementById("modalTitulo").innerText = item.livro || "Sem Título";
       document.getElementById("modalAutor").innerText = item.autor || "";
 
@@ -958,7 +963,6 @@ function abrirModal(item) {
         for (let cap in item.subcapitulosMap) {
           let conteudo = item.subcapitulosMap[cap] || "";
           
-          // Extrai o nome do capítulo da primeira linha
           let nomeCapCalculado = conteudo ? conteudo.split('\n')[0].trim() : "";
           let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? item.nomesCapitulosMap[cap] : nomeCapCalculado;
           nomeCap = nomeCap ? ` - ${nomeCap}` : "";
@@ -1008,6 +1012,139 @@ function abrirModal(item) {
       fecharFormularios();
       document.getElementById("formEstudosContainer").style.display = "block";
       document.getElementById("fabBtn").classList.add("hidden");
+    }
+
+    /* FUNÇÕES RESTAURADAS DE SALVAR */
+    
+    function atualizarPlanilha() {
+      let linha = document.getElementById("linhaPlanilha").value;
+      let capAtual = document.getElementById("txtCapituloAtual").value;
+      let nomeCap = document.getElementById("txtNomeCapitulo").value;
+      let pagAtual = document.getElementById("txtPaginaAtual").value;
+      let dataLei = formatarDataIso(document.getElementById("txtData").value);
+      let obs = document.getElementById("txtObservacoes").value;
+      let subcaps = document.getElementById("txtSubcapitulos").value;
+
+      document.getElementById("statusMsg").innerText = "Salvando...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          funcao: "salvarDados",
+          linha: linha,
+          capituloAtual: capAtual,
+          nomeCapitulo: nomeCap,
+          paginaAtual: pagAtual,
+          dataLeitura: dataLei,
+          observacoes: obs,
+          subcapitulos: subcaps
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.status === "sucesso") {
+          alert("Atualizado com sucesso!");
+          fecharFormularios();
+          carregarDadosIniciais();
+        } else {
+          alert("Erro: " + res.mensagem);
+        }
+        document.getElementById("statusMsg").innerText = "";
+      })
+      .catch(e => {
+        alert("Erro de conexão.");
+        document.getElementById("statusMsg").innerText = "";
+      });
+    }
+
+    function salvarNovoLivro() {
+      let livro = document.getElementById("novoLivro").value;
+      if(!livro) { alert("Nome do livro é obrigatório!"); return; }
+
+      document.getElementById("statusNovoMsg").innerText = "Salvando...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          funcao: "inserirLivro",
+          livro: livro,
+          autor: document.getElementById("novoAutor").value,
+          capituloAtual: document.getElementById("novoCapituloAtual").value,
+          totalCapitulos: document.getElementById("novoTotalCapitulos").value,
+          nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
+          paginaInicial: document.getElementById("novoPaginaInicial").value,
+          paginaAtual: document.getElementById("novoPaginaAtual").value,
+          totalPaginas: document.getElementById("novoTotalPaginas").value,
+          capaUrl: document.getElementById("novoCapaUrl").value,
+          dataLeitura: formatarDataIso(document.getElementById("novoData").value),
+          observacoes: document.getElementById("novoObservacoes").value,
+          subcapitulos: document.getElementById("novoSubcapitulos").value
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.status === "sucesso") {
+          alert("Cadastrado com sucesso!");
+          fecharFormularios();
+          carregarDadosIniciais();
+        } else {
+          alert("Erro: " + res.mensagem);
+        }
+        document.getElementById("statusNovoMsg").innerText = "";
+      })
+      .catch(e => {
+        alert("Erro de conexão.");
+        document.getElementById("statusNovoMsg").innerText = "";
+      });
+    }
+
+    function salvarNovoEstudo() {
+      let assunto = document.getElementById("estudoAssunto").value;
+      if(!assunto) { alert("Assunto é obrigatório!"); return; }
+
+      let data = document.getElementById("estudoData").value;
+      let horario = document.getElementById("estudoHorario").value;
+      let concluido = document.getElementById("estudoConcluido").checked ? "Sim" : "Não";
+
+      let dataBr = "";
+      if(data) {
+         let p = data.split("-");
+         dataBr = `${p[2]}/${p[1]}/${p[0]}`;
+      }
+
+      document.getElementById("statusEstudoMsg").innerText = "Salvando...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          funcao: "inserirEstudo",
+          assunto: assunto,
+          data: dataBr,
+          horario: horario,
+          concluido: concluido
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if(res.status === "sucesso") {
+          alert("Estudo registrado com sucesso!");
+          fecharFormularios();
+          carregarEstudos();
+        } else {
+          alert("Erro: " + res.mensagem);
+        }
+        document.getElementById("statusEstudoMsg").innerText = "";
+      })
+      .catch(e => {
+        alert("Erro de conexão.");
+        document.getElementById("statusEstudoMsg").innerText = "";
+      });
     }
   </script>
 </body>
