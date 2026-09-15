@@ -682,7 +682,7 @@
       document.getElementById("sidebarOverlay").style.display = "none";
     }
 
-    function carregarEstudos() {
+   function carregarEstudos() {
   const container = document.getElementById("listaEstudosContainer");
   container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando...</p>";
 
@@ -692,15 +692,17 @@
     body: JSON.stringify({ funcao: "obterEstudos" })
   })
   .then(res => res.json())
-  .then(estudos => {
-    if (!Array.isArray(estudos) || estudos.length === 0) {
+  .then(resultado => {
+    // Ajuste 1: Agora lemos resultado.dados em vez de assumir que o resultado direto é a array
+    if (resultado.status !== "sucesso" || !Array.isArray(resultado.dados) || resultado.dados.length === 0) {
       container.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum registro encontrado.</p>";
       return;
     }
 
     let html = "";
-    estudos.forEach(item => {
-      const foiConcluido = item.concluido.trim().toLowerCase() === "sim";
+    resultado.dados.forEach(item => {
+      // Ajuste 2: O backend agora nos diz diretamente se é true ou false
+      const foiConcluido = item.concluido === true; 
       const corStatus = foiConcluido ? "#28a745" : "#dc3545";
 
       html += `
@@ -719,7 +721,7 @@
               ${foiConcluido ? "✓ Concluído" : "⏳ Pendente"}
             </span>
             <input type="checkbox" ${foiConcluido ? "checked" : ""} 
-                   onchange="alternarStatusEstudo(${item.linha}, '${item.concluido}')" 
+                   onchange="alternarStatusEstudo(${item.linha}, ${foiConcluido})" 
                    style="width: 18px; height: 18px; cursor: pointer; accent-color: #6f42c1;">
           </label>
         </div>
@@ -733,8 +735,12 @@
   });
 }
 
-function alternarStatusEstudo(linha, statusAtual) {
-  const novoStatus = (statusAtual.trim().toLowerCase() === "sim") ? "Não" : "Sim";
+function alternarStatusEstudo(linha, foiConcluido) {
+  // Ajuste 3: Traduzimos o true/false de volta para "Sim" ou "Não" para salvar na planilha
+  const novoStatus = foiConcluido ? "Não" : "Sim";
+
+  // Opcional: Feedback visual imediato antes da requisição terminar
+  // document.getElementById("listaEstudosContainer").innerHTML = "<p style='text-align:center; color:#666;'>Atualizando status...</p>";
 
   fetch(WEB_APP_URL, {
     method: "POST",
@@ -748,14 +754,13 @@ function alternarStatusEstudo(linha, statusAtual) {
   .then(res => res.json())
   .then(resp => {
     if (resp.status === "sucesso") {
-      carregarEstudos(); // Recarrega a lista com o novo status
+      carregarEstudos(); 
     } else {
       alert("Erro ao atualizar o status na planilha.");
     }
   })
   .catch(err => console.error("Erro na requisição:", err));
 }
-
     /* FUNÇÕES DO MODAL FLUXOGRAMA */
     function abrirFluxogramaBackend() {
       document.getElementById("modalFluxogramaBackend").style.display = "flex";
