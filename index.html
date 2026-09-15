@@ -919,26 +919,25 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function aoMudarCapituloAtual() {
+   function aoMudarCapituloAtual() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
       let txtSub = document.getElementById("txtSubcapitulos");
       let txtNome = document.getElementById("txtNomeCapitulo");
       
       if (cap && subcapitulosMapAtual[cap]) {
-        txtSub.value = subcapitulosMapAtual[cap];
+        let conteudo = subcapitulosMapAtual[cap];
+        txtSub.value = conteudo; // Mantém todo o texto no campo de subcapítulos
+        
+        // Pega apenas a primeira linha do conteúdo para o Nome do Capítulo
+        let primeiraLinha = conteudo.split('\n')[0].trim();
+        txtNome.value = primeiraLinha;
       } else {
         txtSub.value = "";
-      }
-
-      if (cap && nomesCapitulosMapAtual[cap]) {
-        txtNome.value = nomesCapitulosMapAtual[cap];
-      } else {
-        // Correção: Limpa o campo de nome de capítulo caso não exista no mapeamento
-        txtNome.value = ""; 
+        txtNome.value = "";
       }
       atualizarRotuloSubcapitulo();
     }
-
+    
     function atualizarRotuloSubcapitulo() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
       let nomeCap = document.getElementById("txtNomeCapitulo").value.trim();
@@ -950,28 +949,30 @@
       }
     }
 
-    function abrirModal(item) {
-      document.getElementById("modalTitulo").textContent = item.livro || "Sem título";
-      document.getElementById("modalAutor").textContent = item.autor ? `Autor: ${item.autor}` : "";
-      
+function abrirModal(item) {
+      document.getElementById("modalTitulo").innerText = item.livro || "Sem Título";
+      document.getElementById("modalAutor").innerText = item.autor || "";
+
       let htmlSub = "";
       if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
         for (let cap in item.subcapitulosMap) {
-          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
-          // Substitui quebras de linha por <br>
-          let textoSub = item.subcapitulosMap[cap] ? item.subcapitulosMap[cap].replace(/\n/g, '<br>') : "";
+          let conteudo = item.subcapitulosMap[cap] || "";
           
+          // Extrai o nome do capítulo da primeira linha
+          let nomeCapCalculado = conteudo ? conteudo.split('\n')[0].trim() : "";
+          let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? item.nomesCapitulosMap[cap] : nomeCapCalculado;
+          nomeCap = nomeCap ? ` - ${nomeCap}` : "";
+          
+          let textoSub = conteudo.replace(/\n/g, '<br>');
           let isAtual = (String(cap).trim() === String(item.capituloAtual).trim());
           
           if (isAtual) {
-            // Correção: Destaca o capítulo atual com fundo e borda verde
             htmlSub += `
               <div style="background-color: #e8f5e9; border: 1px solid #c3e6cb; padding: 10px; border-radius: 6px; margin-bottom: 12px;">
                 <strong style="color: #0f5132; font-size: 14px;">📌 Capítulo ${cap}${nomeCap} (Atual):</strong><br>
                 <div style="color: #0f5132; font-family: monospace; font-size: 13px; margin-top: 5px;">${textoSub}</div>
               </div>`;
           } else {
-            // Capítulo padrão sem destaque
             htmlSub += `
               <div style="margin-bottom: 12px; padding: 0 10px;">
                 <strong style="color: #333; font-size: 14px;">📌 Capítulo ${cap}${nomeCap}:</strong><br>
@@ -980,10 +981,9 @@
           }
         }
       } else {
-        htmlSub = "<div style='padding: 10px;'>Nenhum subcapítulo registrado.</div>";
+        htmlSub = "Nenhum subcapítulo registrado para este livro.";
       }
-      
-      // Correção: Substituído textContent por innerHTML para as cores e formatações funcionarem
+
       document.getElementById("modalTextoSubcapitulos").innerHTML = htmlSub;
       document.getElementById("modalOverlay").style.display = "flex";
     }
