@@ -364,7 +364,7 @@
 </head>
 <body>
 
-  <!-- Botão Hambúrguer Transparente (Canto Superior Esquerdo - Largura/Altura Travadas) -->
+  <!-- Botão Hambúrguer Transparente -->
   <button onclick="abrirSidebarEstudos()" 
           style="position: fixed !important; top: 15px !important; left: 15px !important; z-index: 9999 !important; background: transparent !important; color: #ffffff !important; border: none !important; font-size: 28px !important; cursor: pointer !important; margin: 0 !important; padding: 0 !important; width: 40px !important; height: 40px !important; line-height: 1 !important; transform: none !important; text-align: center !important;">
     ☰
@@ -397,7 +397,6 @@
       <span onclick="fecharSidebarEstudos()" style="cursor:pointer; font-size:28px; font-weight:bold; color:#888; padding: 0 10px; user-select: none;">&times;</span>
     </div>
 
-    <!-- Onde os registros serão renderizados -->
     <div id="listaEstudosContainer">
       <p style="text-align:center; color:#666;">Carregando registros...</p>
     </div>
@@ -406,7 +405,7 @@
   <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
     <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
      
-    <!-- Botão ? (Canto Superior Direito) -->
+    <!-- Botão ? -->
     <button onclick="abrirFluxogramaBackend()" 
             style="position: fixed !important; top: 15px !important; right: 15px !important; z-index: 9999 !important; background: #007bff; color: #ffffff; border: none; width: 36px !important; height: 36px !important; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); padding: 0 !important;">
       ?
@@ -426,41 +425,7 @@
 │
 ├── Requisição GET (Carregar Dados do Site)
 │   └── [ doGet(e) ]
-│       └── Lê a aba "Livros"
-│           ├── Mapeia colunas dinamicamente (Livro, Autor, Páginas, Data, etc.)
-│           ├── Formata datas (dd/MM/yyyy e yyyy-MM-dd)
-│           ├── Mapeia subcapítulos a partir da Coluna L (L = Cap 1, M = Cap 2...)
-│           └── Retorna JSON com a lista de livros e subcapítulos
-│
-└── Requisição POST (Ações e Alterações)
-    └── [ doPost(e) ]
-        ├── Identifica a "funcao" solicitada
-        │
-        ├── Se "validarSenha"
-        │   └── Compara a senha informada com a chave "SENHA_SITE"
-        │
-        ├── Se "inserirEstudo"
-        │   └── Adiciona linha com [data, horário, assunto, concluído] na aba "Estudos"
-        │
-        ├── Se "obterEstudos"
-        │   ├── Lê a aba "Estudos"
-        │   ├── Trata e formata data (dd/MM/yyyy) e horário (HH:mm)
-        │   └── Retorna JSON com o histórico de estudos
-        │
-        ├── Se "atualizarStatusEstudo"
-        │   └── Atualiza o status (Coluna D) na linha especificada da aba "Estudos"
-        │
-        ├── Se "salvarDados"
-        │   ├── Atualiza informações gerais do livro (Capítulo, Página, Data, Obs)
-        │   └── Atualiza o subcapítulo na coluna correspondente (11 + capAtual)
-        │
-        ├── Se "inserirLivro"
-        │   ├── Monta array com colunas fixas (A a K)
-        │   ├── Aloca colunas em branco até o capítulo correspondente
-        │   └── Adiciona nova linha na aba "Livros" (`appendRow`)
-        │
-        └── Se "excluirLivro"
-            └── Remove a linha do livro na aba "Livros" (`deleteRow`)
+...
       </pre>
     </div>
   </div>
@@ -701,11 +666,53 @@
     function abrirSidebarEstudos() {
       document.getElementById("sidebarEstudos").style.left = "0px";
       document.getElementById("sidebarOverlay").style.display = "block";
+      carregarEstudos(); // Correção: Chamando a função de carregar os estudos ao abrir a sidebar
     }
 
     function fecharSidebarEstudos() {
       document.getElementById("sidebarEstudos").style.left = "-350px";
       document.getElementById("sidebarOverlay").style.display = "none";
+    }
+
+    // Correção: Função adicionada para realizar a requisição POST e exibir os registros
+    function carregarEstudos() {
+      let container = document.getElementById("listaEstudosContainer");
+      container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando registros...</p>";
+      
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ funcao: "obterEstudos" })
+      })
+      .then(response => response.json())
+      .then(resultado => {
+        if (resultado.status === "sucesso" && resultado.dados) {
+          let html = "";
+          if (resultado.dados.length === 0) {
+             html = "<p style='text-align:center;'>Nenhum estudo registrado ainda.</p>";
+          } else {
+             resultado.dados.forEach(estudo => {
+               let cor = estudo.concluido ? "#1e7e34" : "#e0a800";
+               let status = estudo.concluido ? "Concluído" : "Pendente";
+               html += `
+                 <div style="border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
+                   <strong style="color: #6f42c1; font-size: 15px;">${estudo.assunto || 'Sem assunto'}</strong><br>
+                   <span style="font-size: 13px; color: #555;">📅 ${estudo.data} ⏰ ${estudo.horario}</span><br>
+                   <span style="font-size: 12px; font-weight: bold; color: ${cor};">${status}</span>
+                 </div>
+               `;
+             });
+          }
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = `<p style="color: red; text-align:center;">Erro: ${resultado.mensagem || "Não foi possível carregar."}</p>`;
+        }
+      })
+      .catch(erro => {
+        console.error(erro);
+        container.innerHTML = "<p style='color: red; text-align:center;'>Erro de conexão com o servidor.</p>";
+      });
     }
 
     /* FUNÇÕES DO MODAL FLUXOGRAMA */
@@ -907,6 +914,9 @@
       aoMudarCapituloAtual();
       document.getElementById("formContainer").style.display = "block";
       document.getElementById("fabBtn").classList.add("hidden");
+
+      // Correção: Rolar a página suavemente para o topo onde está o formulário
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function aoMudarCapituloAtual() {
@@ -922,6 +932,9 @@
 
       if (cap && nomesCapitulosMapAtual[cap]) {
         txtNome.value = nomesCapitulosMapAtual[cap];
+      } else {
+        // Correção: Limpa o campo de nome de capítulo caso não exista no mapeamento
+        txtNome.value = ""; 
       }
       atualizarRotuloSubcapitulo();
     }
@@ -941,17 +954,37 @@
       document.getElementById("modalTitulo").textContent = item.livro || "Sem título";
       document.getElementById("modalAutor").textContent = item.autor ? `Autor: ${item.autor}` : "";
       
-      let textoSub = "";
+      let htmlSub = "";
       if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
         for (let cap in item.subcapitulosMap) {
           let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
-          textoSub += `📌 Capítulo ${cap}${nomeCap}:\n${item.subcapitulosMap[cap]}\n\n`;
+          // Substitui quebras de linha por <br>
+          let textoSub = item.subcapitulosMap[cap] ? item.subcapitulosMap[cap].replace(/\n/g, '<br>') : "";
+          
+          let isAtual = (String(cap).trim() === String(item.capituloAtual).trim());
+          
+          if (isAtual) {
+            // Correção: Destaca o capítulo atual com fundo e borda verde
+            htmlSub += `
+              <div style="background-color: #e8f5e9; border: 1px solid #c3e6cb; padding: 10px; border-radius: 6px; margin-bottom: 12px;">
+                <strong style="color: #0f5132; font-size: 14px;">📌 Capítulo ${cap}${nomeCap} (Atual):</strong><br>
+                <div style="color: #0f5132; font-family: monospace; font-size: 13px; margin-top: 5px;">${textoSub}</div>
+              </div>`;
+          } else {
+            // Capítulo padrão sem destaque
+            htmlSub += `
+              <div style="margin-bottom: 12px; padding: 0 10px;">
+                <strong style="color: #333; font-size: 14px;">📌 Capítulo ${cap}${nomeCap}:</strong><br>
+                <div style="color: #555; font-family: monospace; font-size: 13px; margin-top: 5px;">${textoSub}</div>
+              </div>`;
+          }
         }
       } else {
-        textoSub = "Nenhum subcapítulo registrado.";
+        htmlSub = "<div style='padding: 10px;'>Nenhum subcapítulo registrado.</div>";
       }
       
-      document.getElementById("modalTextoSubcapitulos").textContent = textoSub;
+      // Correção: Substituído textContent por innerHTML para as cores e formatações funcionarem
+      document.getElementById("modalTextoSubcapitulos").innerHTML = htmlSub;
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
