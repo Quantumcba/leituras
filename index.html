@@ -363,11 +363,13 @@
   </style>
 </head>
 <body>
-  <!-- Botão Hambúrguer Transparente (Canto Superior Esquerdo) -->
-<button onclick="abrirSidebarEstudos()" 
-        style="position: fixed !important; top: 15px !important; left: 15px !important; z-index: 9999 !important; background: transparent !important; color: #ffffff !important; border: none !important; font-size: 28px !important; cursor: pointer !important; margin: 0 !important; padding: 5px !important; line-height: 1 !important; transform: none !important;">
-  ☰
-</button>
+
+  <!-- Botão Hambúrguer Transparente (Canto Superior Esquerdo - Largura/Altura Travadas) -->
+  <button onclick="abrirSidebarEstudos()" 
+          style="position: fixed !important; top: 15px !important; left: 15px !important; z-index: 9999 !important; background: transparent !important; color: #ffffff !important; border: none !important; font-size: 28px !important; cursor: pointer !important; margin: 0 !important; padding: 0 !important; width: 40px !important; height: 40px !important; line-height: 1 !important; transform: none !important; text-align: center !important;">
+    ☰
+  </button>
+
   <!-- Tela de Login / Senha -->
   <div id="modal-senha" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 9999;">
     <div style="background: #222; padding: 30px; border-radius: 12px; text-align: center; color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.5); width: 300px;">
@@ -385,40 +387,41 @@
     </div>
   </div>
 
-<!-- Fundo escurecido ao abrir o menu -->
-<div id="sidebarOverlay" onclick="fecharSidebarEstudos()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;"></div>
+  <!-- Fundo escurecido ao abrir o menu -->
+  <div id="sidebarOverlay" onclick="fecharSidebarEstudos()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;"></div>
 
-<!-- Gaveta Lateral (Sidebar Esquerda) -->
-<div id="sidebarEstudos" style="position:fixed; top:0; left:-350px; width:320px; height:100%; background:#ffffff; z-index:1001; box-shadow:3px 0 10px rgba(0,0,0,0.2); transition: left 0.3s ease; padding: 20px; box-sizing: border-box; overflow-y: auto;">
-  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #6f42c1; padding-bottom:10px; margin-bottom:15px;">
-    <h3 style="margin:0; color:#6f42c1; font-size: 18px;">📚 Registros de Estudos</h3>
-    <span onclick="fecharSidebarEstudos()" style="cursor:pointer; font-size:24px; font-weight:bold; color:#888;">&times;</span>
-  </div>
+  <!-- Gaveta Lateral (Sidebar Esquerda) -->
+  <div id="sidebarEstudos" style="position:fixed; top:0; left:-350px; width:320px; height:100%; background:#ffffff; z-index:1001; box-shadow:3px 0 10px rgba(0,0,0,0.2); transition: left 0.3s ease; padding: 20px; box-sizing: border-box; overflow-y: auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #6f42c1; padding-bottom:10px; margin-bottom:15px;">
+      <h3 style="margin:0; color:#6f42c1; font-size: 18px;">📚 Registros de Estudos</h3>
+      <span onclick="fecharSidebarEstudos()" style="cursor:pointer; font-size:28px; font-weight:bold; color:#888; padding: 0 10px; user-select: none;">&times;</span>
+    </div>
 
-  <!-- Onde os registros serão renderizados -->
-  <div id="listaEstudosContainer">
-    <p style="text-align:center; color:#666;">Carregando registros...</p>
+    <!-- Onde os registros serão renderizados -->
+    <div id="listaEstudosContainer">
+      <p style="text-align:center; color:#666;">Carregando registros...</p>
+    </div>
   </div>
-</div>
-  
+   
   <div style="text-align: center; padding: 20px 10px 5px 10px; position: relative; max-width: 950px; margin: 0 auto;">
     <img src="logo.png" alt="Logo" style="max-width: 280px; height: auto; display: block; margin: 0 auto;">
-    
-  <!-- Botão ? (Canto Superior Direito) -->
-<button onclick="abrirFluxogramaBackend()" 
-        style="position: fixed !important; top: 15px !important; right: 15px !important; z-index: 9999 !important; background: #007bff; color: #ffffff; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">
-  ?
-</button>
+     
+    <!-- Botão ? (Canto Superior Direito) -->
+    <button onclick="abrirFluxogramaBackend()" 
+            style="position: fixed !important; top: 15px !important; right: 15px !important; z-index: 9999 !important; background: #007bff; color: #ffffff; border: none; width: 36px !important; height: 36px !important; border-radius: 50%; font-size: 18px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.3); padding: 0 !important;">
+      ?
+    </button>
+  </div>
 
-<!-- Modal do Fluxograma -->
-<div id="modalFluxogramaBackend" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
-  <div style="background: #ffffff; padding: 20px; border-radius: 8px; width: 90%; max-width: 650px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 15px;">
-      <h3 style="margin: 0; color: #007bff; font-size: 18px;">ℹ️ Estrutura do Backend</h3>
-      <span onclick="fecharFluxogramaBackend()" style="cursor: pointer; font-size: 24px; font-weight: bold; color: #888;">&times;</span>
-    </div>
-    
-    <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-size: 12px; font-family: monospace; overflow-x: auto; line-height: 1.4;">
+  <!-- Modal do Fluxograma -->
+  <div id="modalFluxogramaBackend" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center;">
+    <div style="background: #ffffff; padding: 20px; border-radius: 8px; width: 90%; max-width: 650px; max-height: 80vh; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #007bff; padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="margin: 0; color: #007bff; font-size: 18px;">ℹ️ Estrutura do Backend</h3>
+        <span onclick="fecharFluxogramaBackend()" style="cursor: pointer; font-size: 24px; font-weight: bold; color: #888;">&times;</span>
+      </div>
+      
+      <pre style="background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-size: 12px; font-family: monospace; overflow-x: auto; line-height: 1.4;">
 [ Site no GitHub Pages (Frontend) ]
 │
 ├── Requisição GET (Carregar Dados do Site)
@@ -458,17 +461,18 @@
         │
         └── Se "excluirLivro"
             └── Remove a linha do livro na aba "Livros" (`deleteRow`)
-    </pre>
+      </pre>
+    </div>
   </div>
-</div>
-   
+     
   <div id="debugStatus" class="erro-msg" style="text-align:center; padding: 20px;"></div>
-  <!-- NOVO: Botão para abrir painel de estudos -->
+
+  <!-- Botão para abrir painel de estudos -->
   <div style="text-align: center; margin-bottom: 20px; max-width: 950px; margin-left: auto; margin-right: auto;">
     <button onclick="mostrarFormEstudos()" style="background-color: #6f42c1; width: auto; padding: 10px 20px; font-size: 14px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">📅 Organizar Estudos</button>
   </div>
 
-  <!-- NOVO: Painel de Estudos -->
+  <!-- Painel de Estudos -->
   <div class="form-wrapper" id="formEstudosContainer" style="display:none;">
     <h3 style="margin-top:0; color:#6f42c1; font-size:18px; border-bottom: 2px solid #6f42c1; padding-bottom: 5px;">Registrar Estudo</h3>
 
@@ -497,6 +501,7 @@
     </div>
     <div id="statusEstudoMsg" class="msg"></div>
   </div>
+
   <div class="form-wrapper" id="formContainer" style="display:none;">
     <h3 style="margin-top:0; color:#1a73e8; font-size:18px; border-bottom: 2px solid #1a73e8; padding-bottom: 5px;">Atualizar Livro</h3>
     
@@ -692,6 +697,18 @@
       }
     }
 
+    /* FUNÇÕES DA GAVETA LATERAL / SIDEBAR */
+    function abrirSidebarEstudos() {
+      document.getElementById("sidebarEstudos").style.left = "0px";
+      document.getElementById("sidebarOverlay").style.display = "block";
+    }
+
+    function fecharSidebarEstudos() {
+      document.getElementById("sidebarEstudos").style.left = "-350px";
+      document.getElementById("sidebarOverlay").style.display = "none";
+    }
+
+    /* FUNÇÕES DO MODAL FLUXOGRAMA */
     function abrirFluxogramaBackend() {
       document.getElementById("modalFluxogramaBackend").style.display = "flex";
     }
@@ -861,207 +878,80 @@
       document.getElementById("modalOverlay").style.display = "none";
       document.getElementById("formContainer").style.display = "none";
       document.getElementById("formNovoContainer").style.display = "none";
-      document.getElementById("formEstudosContainer").style.display = "none"; // Linha adicionada
+      document.getElementById("formEstudosContainer").style.display = "none";
       document.getElementById("fabBtn").classList.remove("hidden");
     }
 
     function carregarDetalhes(index) {
       fecharFormularios();
-      document.getElementById("fabBtn").classList.add("hidden");
+      let item = dadosGlobais[index];
+      if (!item) return;
 
-      let form = document.getElementById("formContainer");
-      let dados = dadosGlobais[index];
-      
-      document.getElementById("linhaPlanilha").value = dados.linha;
-      document.getElementById("txtLivro").value = dados.livro;
-      document.getElementById("txtAutor").value = dados.autor || "";
-      document.getElementById("txtCapaUrl").value = dados.capaUrl || "";
-      document.getElementById("txtPaginaInicial").value = dados.paginaInicial || "";
-      document.getElementById("txtTotalPaginas").value = dados.totalPaginas || "";
-      document.getElementById("txtTotalCapitulos").value = dados.totalCapitulos || "";
-      document.getElementById("txtCapituloAtual").value = dados.capituloAtual;
-      document.getElementById("txtPaginaAtual").value = dados.paginaAtual;
-      document.getElementById("txtData").value = formatarDataIso(dados.dataIso || dados.dataExibicao);
-      
-      subcapitulosMapAtual = dados.subcapitulosMap || {};
-      nomesCapitulosMapAtual = dados.nomesCapitulosMap || {};
-      
+      document.getElementById("linhaPlanilha").value = item.linha || (index + 2);
+      document.getElementById("txtLivro").value = item.livro || "";
+      document.getElementById("txtAutor").value = item.autor || "";
+      document.getElementById("txtCapaUrl").value = item.capaUrl || "";
+      document.getElementById("txtPaginaInicial").value = item.paginaInicial || "1";
+      document.getElementById("txtTotalPaginas").value = item.totalPaginas || "";
+      document.getElementById("txtTotalCapitulos").value = item.totalCapitulos || "";
+
+      document.getElementById("txtCapituloAtual").value = item.capituloAtual || "";
+      document.getElementById("txtPaginaAtual").value = item.paginaAtual || "";
+      document.getElementById("txtData").value = formatarDataIso(item.dataIso || item.dataExibicao);
+      document.getElementById("txtNomeCapitulo").value = item.nomeCapitulo || "";
+      document.getElementById("txtObservacoes").value = item.observacoes || "";
+
+      subcapitulosMapAtual = item.subcapitulosMap || {};
+      nomesCapitulosMapAtual = item.nomesCapitulosMap || {};
+
       aoMudarCapituloAtual();
+      document.getElementById("formContainer").style.display = "block";
+      document.getElementById("fabBtn").classList.add("hidden");
+    }
+
+    function aoMudarCapituloAtual() {
+      let cap = document.getElementById("txtCapituloAtual").value.trim();
+      let txtSub = document.getElementById("txtSubcapitulos");
+      let txtNome = document.getElementById("txtNomeCapitulo");
       
-      document.getElementById("txtObservacoes").value = dados.observacoes;
-      document.getElementById("statusMsg").innerText = "";
-      
-      form.style.display = "block";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (cap && subcapitulosMapAtual[cap]) {
+        txtSub.value = subcapitulosMapAtual[cap];
+      } else {
+        txtSub.value = "";
+      }
+
+      if (cap && nomesCapitulosMapAtual[cap]) {
+        txtNome.value = nomesCapitulosMapAtual[cap];
+      }
+      atualizarRotuloSubcapitulo();
     }
 
     function atualizarRotuloSubcapitulo() {
       let cap = document.getElementById("txtCapituloAtual").value.trim();
       let nomeCap = document.getElementById("txtNomeCapitulo").value.trim();
-      let textoRotulo = `Subcapítulos do Capítulo ${cap || 'Atual'}`;
-      if (nomeCap) textoRotulo += ` - ${nomeCap}`;
-      document.getElementById("lblSubcapitulos").innerText = textoRotulo + ":";
-    }
-
-    function aoMudarCapituloAtual() {
-  let cap = document.getElementById("txtCapituloAtual").value.trim();
-  
-  let nomeCap = "";
-  // 1. Tenta pegar o nome já mapeado
-  if (cap && nomesCapitulosMapAtual[cap]) {
-    nomeCap = nomesCapitulosMapAtual[cap];
-  } 
-  // 2. Se estiver vazio, tenta extrair da primeira linha dos subcapítulos deste capítulo
-  else if (cap && subcapitulosMapAtual[cap]) {
-    let linhas = subcapitulosMapAtual[cap].split('\n').filter(l => l.trim() !== "");
-    if (linhas.length > 0) {
-      // Se a primeira linha NÃO começar com número (ex: 2.1), assumimos que é o Título
-      if (!/^\d+\.\d+/.test(linhas[0])) {
-        nomeCap = linhas[0].trim();
-        nomesCapitulosMapAtual[cap] = nomeCap; // Salva para não precisar ler de novo
+      let lbl = document.getElementById("lblSubcapitulos");
+      if (cap) {
+        lbl.textContent = `Subcapítulos do Cap. ${cap}` + (nomeCap ? ` (${nomeCap})` : "") + ":";
+      } else {
+        lbl.textContent = "Subcapítulos do Capítulo:";
       }
-    }
-  }
-  
-  document.getElementById("txtNomeCapitulo").value = nomeCap;
-  document.getElementById("txtSubcapitulos").value = (cap && subcapitulosMapAtual[cap] !== undefined) ? subcapitulosMapAtual[cap] : "";
-  
-  atualizarRotuloSubcapitulo();
-}
-    function mostrarFormNovo() {
-      fecharFormularios();
-      document.getElementById("fabBtn").classList.add("hidden");
-      
-      document.getElementById("novoLivro").value = "";
-      document.getElementById("novoAutor").value = "";
-      document.getElementById("novoCapituloAtual").value = "";
-      document.getElementById("novoNomeCapitulo").value = "";
-      document.getElementById("novoPaginaInicial").value = "";
-      document.getElementById("novoPaginaAtual").value = "";
-      document.getElementById("novoTotalPaginas").value = "";
-      document.getElementById("novoCapaUrl").value = "";
-      document.getElementById("novoData").value = "";
-      document.getElementById("novoSubcapitulos").value = "";
-      document.getElementById("novoObservacoes").value = "";
-      document.getElementById("statusNovoMsg").innerText = "";
-
-      let formNovo = document.getElementById("formNovoContainer");
-      formNovo.style.display = "block";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function atualizarPlanilha() {
-      let dadosEnvio = {
-        funcao: "salvarDados",
-        linha: document.getElementById("linhaPlanilha").value,
-        capituloAtual: document.getElementById("txtCapituloAtual").value,
-        nomeCapitulo: document.getElementById("txtNomeCapitulo").value,
-        totalCapitulos: document.getElementById("txtTotalCapitulos").value,
-        paginaInicial: document.getElementById("txtPaginaInicial").value,
-        paginaAtual: document.getElementById("txtPaginaAtual").value,
-        totalPaginas: document.getElementById("txtTotalPaginas").value,
-        capaUrl: document.getElementById("txtCapaUrl").value,
-        dataLeitura: converterParaBR(document.getElementById("txtData").value),
-        observacoes: document.getElementById("txtObservacoes").value,
-        autor: document.getElementById("txtAutor").value,
-        subcapitulos: document.getElementById("txtSubcapitulos").value
-      };
-
-      document.getElementById("statusMsg").innerText = "Salvando...";
-
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, 
-        body: JSON.stringify(dadosEnvio)
-      })
-      .then(response => response.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          document.getElementById("statusMsg").innerText = "Salvo com sucesso!";
-          setTimeout(() => {
-            fecharFormularios();
-            carregarDadosIniciais();
-          }, 1000);
-        } else {
-          document.getElementById("statusMsg").innerText = "Erro ao salvar: " + (resp.mensagem || "Erro desconhecido");
-        }
-      })
-      .catch(err => {
-        console.error("Erro:", err);
-        document.getElementById("statusMsg").innerText = "Erro de conexão ao salvar.";
-      });
-    }
-
-    function salvarNovoLivro() {
-      let dadosEnvio = {
-        funcao: "inserirLivro",
-        livro: document.getElementById("novoLivro").value,
-        autor: document.getElementById("novoAutor").value,
-        capituloAtual: document.getElementById("novoCapituloAtual").value,
-        totalCapitulos: document.getElementById("novoTotalCapitulos").value,
-        nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
-        paginaInicial: document.getElementById("novoPaginaInicial").value,
-        paginaAtual: document.getElementById("novoPaginaAtual").value,
-        totalPaginas: document.getElementById("novoTotalPaginas").value,
-        capaUrl: document.getElementById("novoCapaUrl").value,
-        subcapitulos: document.getElementById("novoSubcapitulos").value,
-        dataLeitura: converterParaBR(document.getElementById("novoData").value),
-        observacoes: document.getElementById("novoObservacoes").value
-      };
-
-      document.getElementById("statusNovoMsg").innerText = "Cadastrando novo livro...";
-
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(dadosEnvio)
-      })
-      .then(response => response.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          document.getElementById("statusNovoMsg").innerText = "Livro cadastrado com sucesso!";
-          setTimeout(() => {
-            fecharFormularios();
-            carregarDadosIniciais();
-          }, 1000);
-        } else {
-          document.getElementById("statusNovoMsg").innerText = "Erro: " + (resp.mensagem || "Erro desconhecido");
-        }
-      })
-      .catch(err => {
-        console.error("Erro:", err);
-        document.getElementById("statusNovoMsg").innerText = "Erro de conexão ao cadastrar.";
-      });
     }
 
     function abrirModal(item) {
-      document.getElementById("modalTitulo").innerText = item.livro || "Detalhes do Livro";
-      document.getElementById("modalAutor").innerText = item.autor ? "Autor: " + item.autor : "";
+      document.getElementById("modalTitulo").textContent = item.livro || "Sem título";
+      document.getElementById("modalAutor").textContent = item.autor ? `Autor: ${item.autor}` : "";
       
-      let textoSubHtml = "";
-      let capAtual = item.capituloAtual;
-
+      let textoSub = "";
       if (item.subcapitulosMap && Object.keys(item.subcapitulosMap).length > 0) {
         for (let cap in item.subcapitulosMap) {
-          let isAtual = (cap == capAtual);
-          
           let nomeCap = (item.nomesCapitulosMap && item.nomesCapitulosMap[cap]) ? ` - ${item.nomesCapitulosMap[cap]}` : "";
-          let tituloCap = `Capítulo ${cap}${nomeCap}:`;
-          
-          if (isAtual) {
-            tituloCap = `<span style="color: #1e7e34; font-weight: bold;">${tituloCap}</span>`;
-          }
-          
-          let subs = item.subcapitulosMap[cap].replace(/\n/g, "<br>");
-          textoSubHtml += `${tituloCap}<br>${subs}<br><br>`;
+          textoSub += `📌 Capítulo ${cap}${nomeCap}:\n${item.subcapitulosMap[cap]}\n\n`;
         }
       } else {
-        textoSubHtml = item.subcapitulos ? item.subcapitulos.replace(/\n/g, "<br>") : "Nenhum subcapítulo registrado.";
+        textoSub = "Nenhum subcapítulo registrado.";
       }
       
-      document.getElementById("modalTextoSubcapitulos").innerHTML = textoSubHtml;
+      document.getElementById("modalTextoSubcapitulos").textContent = textoSub;
       document.getElementById("modalOverlay").style.display = "flex";
     }
 
@@ -1069,152 +959,23 @@
       document.getElementById("modalOverlay").style.display = "none";
     }
 
-    function fecharModalFora(event) {
-      if (event.target === document.getElementById("modalOverlay")) {
+    function fecharModalFora(e) {
+      if (e.target.id === "modalOverlay") {
         fecharModal();
       }
     }
+
+    function mostrarFormNovo() {
+      fecharFormularios();
+      document.getElementById("formNovoContainer").style.display = "block";
+      document.getElementById("fabBtn").classList.add("hidden");
+    }
+
     function mostrarFormEstudos() {
       fecharFormularios();
-      document.getElementById("fabBtn").classList.add("hidden");
-      
-      document.getElementById("estudoAssunto").value = "";
-      document.getElementById("estudoData").value = "";
-      document.getElementById("estudoHorario").value = "";
-      document.getElementById("estudoConcluido").checked = false;
-      document.getElementById("statusEstudoMsg").innerText = "";
-
       document.getElementById("formEstudosContainer").style.display = "block";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById("fabBtn").classList.add("hidden");
     }
-
-    function salvarNovoEstudo() {
-      let assunto = document.getElementById("estudoAssunto").value.trim();
-      let data = document.getElementById("estudoData").value;
-      
-      if(!assunto || !data) {
-        document.getElementById("statusEstudoMsg").innerText = "Preencha o Assunto e a Data.";
-        document.getElementById("statusEstudoMsg").className = "erro-msg";
-        return;
-      }
-
-      let dadosEnvio = {
-        funcao: "inserirEstudo",
-        assunto: assunto,
-        data: converterParaBR(data),
-        horario: document.getElementById("estudoHorario").value,
-        concluido: document.getElementById("estudoConcluido").checked ? "Sim" : "Não"
-      };
-
-      document.getElementById("statusEstudoMsg").innerText = "Salvando registro...";
-      document.getElementById("statusEstudoMsg").className = "msg";
-
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(dadosEnvio)
-      })
-      .then(response => response.json())
-      .then(resp => {
-        if (resp.status === "sucesso") {
-          document.getElementById("statusEstudoMsg").innerText = "Estudo registrado com sucesso!";
-          setTimeout(() => fecharFormularios(), 1500);
-        } else {
-          document.getElementById("statusEstudoMsg").innerText = "Erro: " + (resp.mensagem || "Erro desconhecido");
-          document.getElementById("statusEstudoMsg").className = "erro-msg";
-        }
-      })
-      .catch(err => {
-        console.error("Erro:", err);
-        document.getElementById("statusEstudoMsg").innerText = "Erro de conexão ao salvar.";
-        document.getElementById("statusEstudoMsg").className = "erro-msg";
-      });
-    }
-function abrirSidebarEstudos() {
-  document.getElementById("sidebarEstudos").style.left = "0px";
-  document.getElementById("sidebarOverlay").style.display = "block";
-  carregarEstudos();
-}
-
-function fecharSidebarEstudos() {
-  document.getElementById("sidebarEstudos").style.left = "-350px";
-  document.getElementById("sidebarOverlay").style.display = "none";
-}
-function carregarEstudos() {
-  const container = document.getElementById("listaEstudosContainer");
-  container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando...</p>";
-
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ funcao: "obterEstudos" })
-  })
-  .then(res => res.json())
-  .then(estudos => {
-    if (!Array.isArray(estudos) || estudos.length === 0) {
-      container.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum registro encontrado.</p>";
-      return;
-    }
-
-    let html = "";
-    estudos.forEach(item => {
-      const foiConcluido = item.concluido.trim().toLowerCase() === "sim";
-      const corStatus = foiConcluido ? "#28a745" : "#dc3545";
-
-      html += `
-        <div style="background: #f8f9fa; border-left: 4px solid ${corStatus}; border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-          <div style="font-weight: bold; color: #333; margin-bottom: 4px; font-size: 14px;">${item.assunto}</div>
-          <div style="font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-top: 6px;">
-            <span>📅 ${item.data || '---'}</span>
-            <span>⏰ ${item.horario || '---'}</span>
-          </div>
-          
-          <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
-          
-          <!-- Checkbox para alternar status -->
-          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0;">
-            <span style="font-size: 12px; font-weight: bold; color: ${corStatus};">
-              ${foiConcluido ? "✓ Concluído" : "⏳ Pendente"}
-            </span>
-            <input type="checkbox" ${foiConcluido ? "checked" : ""} 
-                   onchange="alternarStatusEstudo(${item.linha}, '${item.concluido}')" 
-                   style="width: 18px; height: 18px; cursor: pointer; accent-color: #6f42c1;">
-          </label>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-  })
-  .catch(err => {
-    console.error(err);
-    container.innerHTML = "<p style='color:red; text-align:center;'>Erro ao carregar registros.</p>";
-  });
-}
-
-function alternarStatusEstudo(linha, statusAtual) {
-  const novoStatus = (statusAtual.trim().toLowerCase() === "sim") ? "Não" : "Sim";
-
-  fetch(WEB_APP_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({
-      funcao: "atualizarStatusEstudo",
-      linha: linha,
-      concluido: novoStatus
-    })
-  })
-  .then(res => res.json())
-  .then(resp => {
-    if (resp.status === "sucesso") {
-      carregarEstudos(); // Recarrega a lista com o novo status
-    } else {
-      alert("Erro ao atualizar o status na planilha.");
-    }
-  })
-  .catch(err => console.error("Erro na requisição:", err));
-}
-
   </script>
 </body>
 </html>
