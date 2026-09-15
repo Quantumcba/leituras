@@ -683,44 +683,78 @@
     }
 
     function carregarEstudos() {
-      let container = document.getElementById("listaEstudosContainer");
-      container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando registros...</p>";
-      
-      fetch(WEB_APP_URL, {
-        method: "POST",
-        redirect: "follow",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({ funcao: "obterEstudos" })
-      })
-      .then(response => response.json())
-      .then(resultado => {
-        if (resultado.status === "sucesso" && resultado.dados) {
-          let html = "";
-          if (resultado.dados.length === 0) {
-             html = "<p style='text-align:center;'>Nenhum estudo registrado ainda.</p>";
-          } else {
-             resultado.dados.forEach(estudo => {
-               let cor = estudo.concluido ? "#1e7e34" : "#e0a800";
-               let status = estudo.concluido ? "Concluído" : "Pendente";
-               html += `
-                 <div style="border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 6px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1);">
-                   <strong style="color: #6f42c1; font-size: 15px;">${estudo.assunto || 'Sem assunto'}</strong><br>
-                   <span style="font-size: 13px; color: #555;">📅 ${estudo.data} ⏰ ${estudo.horario}</span><br>
-                   <span style="font-size: 12px; font-weight: bold; color: ${cor};">${status}</span>
-                 </div>
-               `;
-             });
-          }
-          container.innerHTML = html;
-        } else {
-          container.innerHTML = `<p style="color: red; text-align:center;">Erro: ${resultado.mensagem || "Não foi possível carregar."}</p>`;
-        }
-      })
-      .catch(erro => {
-        console.error(erro);
-        container.innerHTML = "<p style='color: red; text-align:center;'>Erro de conexão com o servidor.</p>";
-      });
+  const container = document.getElementById("listaEstudosContainer");
+  container.innerHTML = "<p style='text-align:center; color:#666;'>Carregando...</p>";
+
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ funcao: "obterEstudos" })
+  })
+  .then(res => res.json())
+  .then(estudos => {
+    if (!Array.isArray(estudos) || estudos.length === 0) {
+      container.innerHTML = "<p style='text-align:center; color:#888;'>Nenhum registro encontrado.</p>";
+      return;
     }
+
+    let html = "";
+    estudos.forEach(item => {
+      const foiConcluido = item.concluido.trim().toLowerCase() === "sim";
+      const corStatus = foiConcluido ? "#28a745" : "#dc3545";
+
+      html += `
+        <div style="background: #f8f9fa; border-left: 4px solid ${corStatus}; border-radius: 6px; padding: 12px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          <div style="font-weight: bold; color: #333; margin-bottom: 4px; font-size: 14px;">${item.assunto}</div>
+          <div style="font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-top: 6px;">
+            <span>📅 ${item.data || '---'}</span>
+            <span>⏰ ${item.horario || '---'}</span>
+          </div>
+          
+          <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
+          
+          <!-- Checkbox para alternar status -->
+          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin: 0;">
+            <span style="font-size: 12px; font-weight: bold; color: ${corStatus};">
+              ${foiConcluido ? "✓ Concluído" : "⏳ Pendente"}
+            </span>
+            <input type="checkbox" ${foiConcluido ? "checked" : ""} 
+                   onchange="alternarStatusEstudo(${item.linha}, '${item.concluido}')" 
+                   style="width: 18px; height: 18px; cursor: pointer; accent-color: #6f42c1;">
+          </label>
+        </div>
+      `;
+    });
+    container.innerHTML = html;
+  })
+  .catch(err => {
+    console.error(err);
+    container.innerHTML = "<p style='color:red; text-align:center;'>Erro ao carregar registros.</p>";
+  });
+}
+
+function alternarStatusEstudo(linha, statusAtual) {
+  const novoStatus = (statusAtual.trim().toLowerCase() === "sim") ? "Não" : "Sim";
+
+  fetch(WEB_APP_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({
+      funcao: "atualizarStatusEstudo",
+      linha: linha,
+      concluido: novoStatus
+    })
+  })
+  .then(res => res.json())
+  .then(resp => {
+    if (resp.status === "sucesso") {
+      carregarEstudos(); // Recarrega a lista com o novo status
+    } else {
+      alert("Erro ao atualizar o status na planilha.");
+    }
+  })
+  .catch(err => console.error("Erro na requisição:", err));
+}
 
     /* FUNÇÕES DO MODAL FLUXOGRAMA */
     function abrirFluxogramaBackend() {
