@@ -946,7 +946,11 @@
         let btnEditar = `<button type="button" class="btn-editar-card">✎ Editar</button>`;
 
         // Verifica se há estudos agendados para colocar o sininho
-        let temAgendamento = estudosGlobais.some(e => e.assunto === item.livro);
+        let temAgendamento = estudosGlobais.some(e => 
+          e.assunto && item.livro && 
+          e.assunto.trim().toLowerCase() === item.livro.trim().toLowerCase() && 
+          !e.concluido
+          );
         let sinoHtml = temAgendamento ? `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#ffc107;" title="Ver agendamentos">🔔</span>` : "";
 
         card.innerHTML = `
