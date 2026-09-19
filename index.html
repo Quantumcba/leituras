@@ -727,7 +727,7 @@
               <div style="font-weight: bold; color: #333; margin-bottom: 4px; font-size: 14px;">${item.assunto}</div>
               <div style="font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-top: 6px;">
                 <span>📅 ${item.data || '---'}</span>
-                <span>⏰ ${item.horario || '---'}</span>
+                <span>⏰ ${formatarHorario(item.horario) || '---'}</span>
               </div>
               
               <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
@@ -859,6 +859,24 @@
       if (dataStr.includes("-")) return dataStr.substring(0, 10);
       return '';
     }
+    function formatarHorario(horaStr) {
+      if (!horaStr) return "";
+      // Se for formato de data ISO retornado pelo Google Sheets (ex: "1899-12-30T13:15:00.000Z")
+      if (typeof horaStr === "string" && horaStr.includes("T") && horaStr.includes("Z")) {
+        let d = new Date(horaStr);
+        let h = d.getHours().toString().padStart(2, '0');
+        let m = d.getMinutes().toString().padStart(2, '0');
+        return `${h}:${m}`;
+      }
+      // Se for apenas texto "HH:mm" ou vier com segundos "HH:mm:ss"
+      if (typeof horaStr === "string" && horaStr.includes(":")) {
+        let partes = horaStr.split(":");
+        let h = partes[0].slice(-2).padStart(2, '0');
+        let m = partes[1].padStart(2, '0');
+        return `${h}:${m}`;
+      }
+      return horaStr;
+    }
 
     function carregarDadosIniciais() {
       document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
@@ -959,7 +977,7 @@
           sinoHtml = `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#ffc107;" title="Ver agendamentos">🔔</span>`;
           
           // Verifica se algum desses estudos pendentes está atrasado
-          let temAtrasado = pendentes.some(e => verificarAtraso(e.data, e.horario));
+         let temAtrasado = pendentes.some(e => verificarAtraso(e.data, formatarHorario(e.horario)));
           if (temAtrasado) {
             // Adiciona o ícone de atenção ao lado do sininho
             sinoHtml += `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#dc3545; margin-left:4px;" title="Agendamento atrasado!">⚠️</span>`;
@@ -1116,7 +1134,7 @@
                 <div style="font-weight: bold; color: #333; margin-bottom: 4px; font-size: 14px;">${item.assunto}</div>
                 <div style="font-size: 12px; color: #666; display: flex; justify-content: space-between; margin-top: 6px;">
                   <span>📅 ${item.data || '---'}</span>
-                  <span>⏰ ${item.horario || '---'}</span>
+                  <span>⏰ ${formatarHorario(item.horario) || '---'}</span>
                 </div>
                 <div style="margin-top: 8px; display: flex; align-items: center; justify-content: space-between;">
                   <span style="font-size: 12px; font-weight: bold; color: ${corStatus};">
@@ -1210,7 +1228,7 @@
       
       document.getElementById("estudoAssunto").value = item.assunto || "";
       document.getElementById("estudoData").value = formatarDataIso(item.data);
-      document.getElementById("estudoHorario").value = item.horario || "";
+      document.getElementById("estudoHorario").value = formatarHorario(item.horario) || "";
       document.getElementById("estudoConcluido").checked = item.concluido === true;
 
       document.getElementById("formEstudosContainer").style.display = "block";
