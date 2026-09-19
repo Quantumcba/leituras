@@ -863,26 +863,9 @@
     // --- FUNÇÃO CORRIGIDA PARA O BUG DE +4 HORAS E 15 MINUTOS ---
     function formatarHorario(horaStr) {
       if (!horaStr) return "";
-      
-      // Se vier no formato ISO longo do Google Sheets (ex: "1899-12-30T13:15:00.000Z")
-      if (typeof horaStr === "string" && horaStr.includes("T")) {
-        // Corta a string para pegar apenas o "13:15" ignorando o fuso do navegador
-        let tempoBruto = horaStr.split("T")[1].substring(0, 5); 
-        let horas = parseInt(tempoBruto.split(":")[0], 10);
-        let minutos = parseInt(tempoBruto.split(":")[1], 10);
-        
-        // Subtrai exatamente 4 horas e 15 minutos (255 minutos) do valor que vem do Google
-        let totalMinutos = (horas * 60) + minutos - 255;
-        
-        // Ajusta caso a subtração passe da meia-noite
-        if (totalMinutos < 0) totalMinutos += 24 * 60;
-        if (totalMinutos >= 24 * 60) totalMinutos -= 24 * 60;
-        
-        let hFinal = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
-        let mFinal = (totalMinutos % 60).toString().padStart(2, '0');
-        
-        return `${hFinal}:${mFinal}`;
-      }
+      // Remove o apóstrofo caso ele venha da planilha, garantindo que o input type="time" leia corretamente
+      return horaStr.replace(/'/g, "").trim();
+    }
       
       // Se for formato de hora padrão "HH:mm" inserido manualmente no formulário
       if (typeof horaStr === "string" && horaStr.includes(":")) {
@@ -1285,7 +1268,9 @@
       if(!assunto) { alert("Assunto é obrigatório!"); return; }
 
       let data = document.getElementById("estudoData").value;
-      let horario = document.getElementById("estudoHorario").value;
+      // Captura o horário e força como texto adicionando o apóstrofo
+      let horarioValor = document.getElementById("estudoHorario").value;
+      let horario = horarioValor ? "'" + horarioValor : "";
       let concluido = document.getElementById("estudoConcluido").checked ? "Sim" : "Não";
 
       let dataBr = "";
