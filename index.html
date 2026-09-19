@@ -1332,6 +1332,112 @@
 
       return dataAgendada < agora;
     }
+
+    function atualizarPlanilha() {
+      let linha = document.getElementById("linhaPlanilha").value;
+      if (!linha) {
+        alert("Erro: Linha da planilha não identificada.");
+        return;
+      }
+
+      let dataVal = document.getElementById("txtData").value;
+      let dataBr = converterParaBR(dataVal);
+
+      let payload = {
+        funcao: "salvarDados",
+        linha: parseInt(linha),
+        livro: document.getElementById("txtLivro").value,
+        autor: document.getElementById("txtAutor").value,
+        capaUrl: document.getElementById("txtCapaUrl").value,
+        paginaInicial: document.getElementById("txtPaginaInicial").value,
+        paginaAtual: document.getElementById("txtPaginaAtual").value,
+        totalPaginas: document.getElementById("txtTotalPaginas").value,
+        capituloAtual: document.getElementById("txtCapituloAtual").value,
+        totalCapitulos: document.getElementById("txtTotalCapitulos").value,
+        nomeCapitulo: document.getElementById("txtNomeCapitulo").value,
+        subcapitulos: document.getElementById("txtSubcapitulos").value,
+        data: dataBr,
+        observacoes: document.getElementById("txtObservacoes").value
+      };
+
+      document.getElementById("statusMsg").innerText = "Salvando alterações...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(resultado => {
+        if (resultado.status === "sucesso") {
+          alert("Livro atualizado com sucesso!");
+          fecharFormularios();
+          carregarDadosIniciais();
+        } else {
+          alert("Erro ao salvar: " + (resultado.mensagem || "Erro desconhecido"));
+          document.getElementById("statusMsg").innerText = "";
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao atualizar planilha:", err);
+        alert("Erro de conexão ao salvar.");
+        document.getElementById("statusMsg").innerText = "";
+      });
+    }
+
+    function salvarNovoLivro() {
+      let livro = document.getElementById("novoLivro").value;
+      if (!livro) {
+        alert("O nome do livro é obrigatório!");
+        return;
+      }
+
+      let dataVal = document.getElementById("novoData").value;
+      let dataBr = converterParaBR(dataVal);
+
+      let payload = {
+        funcao: "inserirLivro",
+        livro: livro,
+        autor: document.getElementById("novoAutor").value,
+        capituloAtual: document.getElementById("novoCapituloAtual").value,
+        totalCapitulos: document.getElementById("novoTotalCapitulos").value,
+        nomeCapitulo: document.getElementById("novoNomeCapitulo").value,
+        paginaInicial: document.getElementById("novoPaginaInicial").value,
+        paginaAtual: document.getElementById("novoPaginaAtual").value,
+        totalPaginas: document.getElementById("novoTotalPaginas").value,
+        capaUrl: document.getElementById("novoCapaUrl").value,
+        subcapitulos: document.getElementById("novoSubcapitulos").value,
+        data: dataBr,
+        observacoes: document.getElementById("novoObservacoes").value
+      };
+
+      document.getElementById("statusNovoMsg").innerText = "Cadastrando livro...";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(resultado => {
+        if (resultado.status === "sucesso") {
+          alert("Livro cadastrado com sucesso!");
+          fecharFormularios();
+          carregarDadosIniciais();
+        } else {
+          alert("Erro ao cadastrar: " + (resultado.mensagem || "Erro desconhecido"));
+          document.getElementById("statusNovoMsg").innerText = "";
+        }
+      })
+      .catch(err => {
+        console.error("Erro ao inserir livro:", err);
+        alert("Erro de conexão ao salvar.");
+        document.getElementById("statusNovoMsg").innerText = "";
+      });
+    }
+    
   </script>
 </body>
 </html>
