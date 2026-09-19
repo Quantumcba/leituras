@@ -672,15 +672,17 @@
       });
     }
 
-    function alternarVisibilidadeSenha() {
+   function alternarVisibilidadeSenha() {
       var input = document.getElementById("input-senha");
       var icone = document.getElementById("toggle-senha");
+      if (!input) return;
+      
       if (input.type === "password") {
         input.type = "text";
-        icone.textContent = "👁️"; 
+        if (icone) icone.textContent = "👁️"; 
       } else {
         input.type = "password";
-        icone.textContent = "👁️‍🗨️"; 
+        if (icone) icone.textContent = "👁️‍🗨️"; 
       }
     }
 
@@ -862,20 +864,8 @@
 
     // --- FUNÇÃO CORRIGIDA PARA O BUG DE +4 HORAS E 15 MINUTOS ---
     function formatarHorario(horaStr) {
-      if (!horaStr) return "";
-      // Remove o apóstrofo caso ele venha da planilha, garantindo que o input type="time" leia corretamente
-      return horaStr.replace(/'/g, "").trim();
-    }
-      
-      // Se for formato de hora padrão "HH:mm" inserido manualmente no formulário
-      if (typeof horaStr === "string" && horaStr.includes(":")) {
-        let partes = horaStr.split(":");
-        let h = partes[0].slice(-2).padStart(2, '0');
-        let m = partes[1].padStart(2, '0');
-        return `${h}:${m}`;
-      }
-      
-      return horaStr;
+      if (horaStr === null || horaStr === undefined) return "";
+      return String(horaStr).replace(/'/g, "").trim();
     }
     
     function carregarDadosIniciais() {
@@ -1315,29 +1305,32 @@
     }
     
     function verificarAtraso(dataStr, horaStr) {
-      if (!dataStr) return false; // Sem data, não consideramos atrasado
+      if (!dataStr) return false;
       
-      let partes = dataStr.split("/");
+      let strData = String(dataStr);
+      let partes = strData.split("/");
       if (partes.length !== 3) return false;
 
       let dia = parseInt(partes[0], 10);
-      let mes = parseInt(partes[1], 10) - 1; // No JavaScript os meses vão de 0 a 11
+      let mes = parseInt(partes[1], 10) - 1;
       let ano = parseInt(partes[2], 10);
 
-      // Se não houver horário agendado, assume 23:59 (só atrasa no dia seguinte)
       let hora = 23;
       let minuto = 59;
 
-      if (horaStr && horaStr.includes(":")) {
-        let pHoras = horaStr.split(":");
-        hora = parseInt(pHoras[0], 10);
-        minuto = parseInt(pHoras[1], 10);
+      if (horaStr) {
+        let strHora = String(horaStr);
+        if (strHora.includes(":")) {
+          let pHoras = strHora.split(":");
+          hora = parseInt(pHoras[0], 10) || 0;
+          minuto = parseInt(pHoras[1], 10) || 0;
+        }
       }
 
       let dataAgendada = new Date(ano, mes, dia, hora, minuto);
       let agora = new Date();
 
-      return dataAgendada < agora; // Retorna true se a data agendada já ficou no passado
+      return dataAgendada < agora;
     }
   </script>
 </body>
