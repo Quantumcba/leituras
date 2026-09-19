@@ -861,20 +861,24 @@
     }
     function formatarHorario(horaStr) {
       if (!horaStr) return "";
-      // Se for formato de data ISO retornado pelo Google Sheets (ex: "1899-12-30T13:15:00.000Z")
+      
+      // Se vier no formato ISO do Google Sheets (ex: "1899-12-30T13:15:00.000Z")
       if (typeof horaStr === "string" && horaStr.includes("T") && horaStr.includes("Z")) {
+        // Extrai a hora e o minuto usando o horário UTC para ignorar o fuso local do navegador
         let d = new Date(horaStr);
-        let h = d.getHours().toString().padStart(2, '0');
-        let m = d.getMinutes().toString().padStart(2, '0');
+        let h = d.getUTCHours().toString().padStart(2, '0');
+        let m = d.getUTCMinutes().toString().padStart(2, '0');
         return `${h}:${m}`;
       }
-      // Se for apenas texto "HH:mm" ou vier com segundos "HH:mm:ss"
+      
+      // Se for formato de hora padrão "HH:mm" ou "HH:mm:ss"
       if (typeof horaStr === "string" && horaStr.includes(":")) {
         let partes = horaStr.split(":");
         let h = partes[0].slice(-2).padStart(2, '0');
         let m = partes[1].padStart(2, '0');
         return `${h}:${m}`;
       }
+      
       return horaStr;
     }
 
