@@ -946,12 +946,25 @@
         let btnEditar = `<button type="button" class="btn-editar-card">✎ Editar</button>`;
 
         // Verifica se há estudos agendados para colocar o sininho
-        let temAgendamento = estudosGlobais.some(e => 
+        // Filtra os agendamentos pendentes deste livro
+        let pendentes = estudosGlobais.filter(e => 
           e.assunto && item.livro && 
           e.assunto.trim().toLowerCase() === item.livro.trim().toLowerCase() && 
           !e.concluido
-          );
-        let sinoHtml = temAgendamento ? `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#ffc107;" title="Ver agendamentos">🔔</span>` : "";
+        );
+
+        let sinoHtml = "";
+        if (pendentes.length > 0) {
+          // Adiciona o sininho padrão
+          sinoHtml = `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#ffc107;" title="Ver agendamentos">🔔</span>`;
+          
+          // Verifica se algum desses estudos pendentes está atrasado
+          let temAtrasado = pendentes.some(e => verificarAtraso(e.data, e.horario));
+          if (temAtrasado) {
+            // Adiciona o ícone de atenção ao lado do sininho
+            sinoHtml += `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#dc3545; margin-left:4px;" title="Agendamento atrasado!">⚠️</span>`;
+          }
+        }
 
         card.innerHTML = `
           ${imagemHtml}
@@ -1279,6 +1292,31 @@
         alert("Erro de conexão.");
         document.getElementById("statusEstudoMsg").innerText = "";
       });
+    }
+    function verificarAtraso(dataStr, horaStr) {
+      if (!dataStr) return false; // Sem data, não consideramos atrasado
+      
+      let partes = dataStr.split("/");
+      if (partes.length !== 3) return false;
+
+      let dia = parseInt(partes[0], 10);
+      let mes = parseInt(partes[1], 10) - 1; // No JavaScript os meses vão de 0 a 11
+      let ano = parseInt(partes[2], 10);
+
+      // Se não houver horário agendado, assume 23:59 (só atrasa no dia seguinte)
+      let hora = 23;
+      let minuto = 59;
+
+      if (horaStr && horaStr.includes(":")) {
+        let pHoras = horaStr.split(":");
+        hora = parseInt(pHoras[0], 10);
+        minuto = parseInt(pHoras[1], 10);
+      }
+
+      let dataAgendada = new Date(ano, mes, dia, hora, minuto);
+      let agora = new Date();
+
+      return dataAgendada < agora; // Retorna true se a data agendada já ficou no passado
     }
   </script>
 </body>
