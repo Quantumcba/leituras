@@ -859,28 +859,41 @@
       if (dataStr.includes("-")) return dataStr.substring(0, 10);
       return '';
     }
+
+    // --- FUNÇÃO CORRIGIDA PARA O BUG DE +4 HORAS E 15 MINUTOS ---
     function formatarHorario(horaStr) {
-  if (!horaStr) return "";
-  
-  // Se vier no formato ISO do Google Sheets (ex: "1899-12-30T17:15:00.000Z")
-  if (typeof horaStr === "string" && horaStr.includes("T") && horaStr.includes("Z")) {
-    // Extrai a hora e o minuto usando o fuso horário LOCAL do navegador
-    let d = new Date(horaStr);
-    let h = d.getHours().toString().padStart(2, '0');
-    let m = d.getMinutes().toString().padStart(2, '0');
-    return `${h}:${m}`;
-  }
-  
-  // Se for formato de hora padrão "HH:mm" ou "HH:mm:ss"
-  if (typeof horaStr === "string" && horaStr.includes(":")) {
-    let partes = horaStr.split(":");
-    let h = partes[0].slice(-2).padStart(2, '0');
-    let m = partes[1].padStart(2, '0');
-    return `${h}:${m}`;
-  }
-  
-  return horaStr;
-}
+      if (!horaStr) return "";
+      
+      // Se vier no formato ISO do Google Sheets (ex: "1899-12-30T13:15:00.000Z")
+      if (typeof horaStr === "string" && horaStr.includes("T") && horaStr.includes("Z")) {
+        let d = new Date(horaStr);
+        let utcHours = d.getUTCHours();
+        let utcMinutes = d.getUTCMinutes();
+        
+        // O Google Sheets aplica o fuso histórico LMT (-4h15m) para datas de 1899.
+        // Isso soma exatos 255 minutos ao UTC (09:00 vira 13:15). 
+        // Subtraímos 255 para restaurar a hora exata da planilha ignorando fusos locais.
+        let totalMinutos = (utcHours * 60) + utcMinutes - 255;
+        
+        if (totalMinutos < 0) totalMinutos += 24 * 60;
+        if (totalMinutos >= 24 * 60) totalMinutos -= 24 * 60;
+        
+        let h = Math.floor(totalMinutos / 60).toString().padStart(2, '0');
+        let m = (totalMinutos % 60).toString().padStart(2, '0');
+        
+        return `${h}:${m}`;
+      }
+      
+      // Se for formato de hora padrão "HH:mm" ou "HH:mm:ss"
+      if (typeof horaStr === "string" && horaStr.includes(":")) {
+        let partes = horaStr.split(":");
+        let h = partes[0].slice(-2).padStart(2, '0');
+        let m = partes[1].padStart(2, '0');
+        return `${h}:${m}`;
+      }
+      
+      return horaStr;
+    }
 
     function carregarDadosIniciais() {
       document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
@@ -1315,6 +1328,7 @@
         document.getElementById("statusEstudoMsg").innerText = "";
       });
     }
+    
     function verificarAtraso(dataStr, horaStr) {
       if (!dataStr) return false; // Sem data, não consideramos atrasado
       
