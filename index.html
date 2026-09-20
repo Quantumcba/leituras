@@ -511,7 +511,10 @@
 
     <label id="lblSubcapitulos" style="margin-top: 6px; display: block;">Subcapítulos do Capítulo:</label>
     <textarea id="txtSubcapitulos" placeholder="Digite os subcapítulos..."></textarea>
-
+    
+    <label>Link do PDF (Google Drive):</label>
+    <input type="text" id="txtPdfUrl" placeholder="https://drive.google.com/file/d/...">
+    
     <label>Observações:</label>
     <textarea id="txtObservacoes" placeholder="Anotações..."></textarea>
 
@@ -564,6 +567,9 @@
     <label>Link da Capa (URL):</label>
     <input type="text" id="novoCapaUrl" placeholder="https://exemplo.com/capa.jpg">
 
+    <label>Link do PDF (Google Drive):</label>
+    <input type="text" id="novoPdfUrl" placeholder="https://drive.google.com/file/d/...">
+    
     <label>Subcapítulos:</label>
     <textarea id="novoSubcapitulos" placeholder="Liste os subcapítulos..."></textarea>
 
@@ -914,7 +920,7 @@
         });
     }
 
-    function renderizarCards() {
+   function renderizarCards() {
       let cardsContainer = document.getElementById("cardsContainer");
       cardsContainer.innerHTML = "";
       
@@ -965,8 +971,9 @@
         let autorHtml = item.autor ? `<div class="card-autor">${item.autor}</div>` : "";
         let btnEditar = `<button type="button" class="btn-editar-card">✎ Editar</button>`;
 
-        // Verifica se há estudos agendados para colocar o sininho
-        // Filtra os agendamentos pendentes deste livro
+        // Botão para abrir o PDF do livro em nova aba
+        let btnPdfHtml = item.pdfUrl ? `<button type="button" onclick="event.stopPropagation(); window.open('${item.pdfUrl}', '_blank')" style="background-color: #dc3545; color: white; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; width: auto; margin-left: 8px; display: inline-flex; align-items: center; gap: 4px; vertical-align: middle;" title="Abrir PDF no Google Drive">📖 Abrir PDF</button>` : "";
+
         let pendentes = estudosGlobais.filter(e => 
           e.assunto && item.livro && 
           e.assunto.trim().toLowerCase() === item.livro.trim().toLowerCase() && 
@@ -975,13 +982,9 @@
 
         let sinoHtml = "";
         if (pendentes.length > 0) {
-          // Adiciona o sininho padrão
           sinoHtml = `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#ffc107;" title="Ver agendamentos">🔔</span>`;
-          
-          // Verifica se algum desses estudos pendentes está atrasado
-         let temAtrasado = pendentes.some(e => verificarAtraso(e.data, formatarHorario(e.horario)));
+          let temAtrasado = pendentes.some(e => verificarAtraso(e.data, formatarHorario(e.horario)));
           if (temAtrasado) {
-            // Adiciona o ícone de atenção ao lado do sininho
             sinoHtml += `<span class="sino-agendamento" style="font-size:20px; cursor:pointer; color:#dc3545; margin-left:4px;" title="Agendamento atrasado!">⚠️</span>`;
           }
         }
@@ -999,7 +1002,9 @@
           </div>
           <div class="progress-text">${percentual.toFixed(0)}% concluído</div>
           <p style="margin-top:10px;"><strong>Data:</strong> ${dataVisual}</p>
-          <p style="color: #003366;"><strong>Página atual:</strong> ${item.paginaAtual || '-'} / ${item.totalPaginas || '-'}</p>
+          <p style="color: #003366; display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+            <strong>Página atual:</strong> ${item.paginaAtual || '-'} / ${item.totalPaginas || '-'} ${btnPdfHtml}
+          </p>
           <p><strong>Obs:</strong> ${item.observacoes || '-'}</p>
         `;
         cardsContainer.appendChild(card);
@@ -1023,6 +1028,7 @@
       document.getElementById("txtLivro").value = item.livro || "";
       document.getElementById("txtAutor").value = item.autor || "";
       document.getElementById("txtCapaUrl").value = item.capaUrl || "";
+      document.getElementById("txtPdfUrl").value = item.pdfUrl || "";
       document.getElementById("txtPaginaInicial").value = item.paginaInicial || "1";
       document.getElementById("txtTotalPaginas").value = item.totalPaginas || "";
       document.getElementById("txtTotalCapitulos").value = item.totalCapitulos || "";
@@ -1361,6 +1367,7 @@
         livro: document.getElementById("txtLivro").value,
         autor: document.getElementById("txtAutor").value,
         capaUrl: document.getElementById("txtCapaUrl").value,
+        pdfUrl: document.getElementById("txtPdfUrl").value,
         paginaInicial: document.getElementById("txtPaginaInicial").value,
         paginaAtual: document.getElementById("txtPaginaAtual").value,
         totalPaginas: document.getElementById("txtTotalPaginas").value,
@@ -1397,8 +1404,8 @@
         document.getElementById("statusMsg").innerText = "";
       });
     }
-
-    function salvarNovoLivro() {
+    
+  function salvarNovoLivro() {
       let livro = document.getElementById("novoLivro").value;
       if (!livro) {
         alert("O nome do livro é obrigatório!");
@@ -1419,6 +1426,7 @@
         paginaAtual: document.getElementById("novoPaginaAtual").value,
         totalPaginas: document.getElementById("novoTotalPaginas").value,
         capaUrl: document.getElementById("novoCapaUrl").value,
+        pdfUrl: document.getElementById("novoPdfUrl").value,
         subcapitulos: document.getElementById("novoSubcapitulos").value,
         data: dataBr,
         observacoes: document.getElementById("novoObservacoes").value
@@ -1448,7 +1456,7 @@
         alert("Erro de conexão ao salvar.");
         document.getElementById("statusNovoMsg").innerText = "";
       });
-    }
+    }    
     
   function abrirModalPdf() {
       let iframe = document.getElementById("iframePdf");
