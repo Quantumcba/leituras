@@ -439,11 +439,10 @@
      
   <div id="debugStatus" class="erro-msg" style="text-align:center; padding: 20px;"></div>
 
-  <!-- Botão para abrir painel de estudos -->
-  <!-- Botões Principais add o botão para abrir o PDF -->
+ <!-- Botões Principais -->
   <div style="display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; max-width: 950px; margin-left: auto; margin-right: auto; flex-wrap: wrap;">
     <button onclick="mostrarFormEstudos()" style="background-color: #6f42c1; width: auto; padding: 10px 20px; font-size: 14px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">📅 Organizar Estudos</button>
-    <button onclick="window.open('https://drive.google.com/file/d/12g3Es43SJn-ajST1mqT9H2zG9FJqXegd/view?usp=sharing', '_blank')" style="background-color: #dc3545; width: auto; padding: 10px 20px; font-size: 14px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">📄 Abrir PDF</button>
+    <button onclick="abrirModalPdf()" style="background-color: #dc3545; width: auto; padding: 10px 20px; font-size: 14px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">📄 Abrir PDF</button>
   </div>
 
   <!-- Painel de Estudos -->
@@ -610,6 +609,17 @@
       <h3 style="color: #6f42c1; margin-top: 0; font-size: 18px; border-bottom: 2px solid #6f42c1; padding-bottom: 5px;">📅 Agendamentos de Estudo</h3>
       <h4 id="tituloLivroAgendamento" style="color: #333; margin-top: 10px; margin-bottom: 15px;"></h4>
       <div id="listaAgendamentosLivro"></div>
+    </div>
+  </div>
+
+  <!-- Modal do PDF (Janela Suspensa) -->
+  <div class="modal-overlay" id="modalPdfOverlay" onclick="fecharModalPdfFora(event)" style="display: none; z-index: 10000;">
+    <div class="modal-content" style="max-width: 900px; width: 95%; height: 85vh; display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #dc3545; padding-bottom: 8px; margin-bottom: 10px;">
+        <h3 style="margin: 0; color: #dc3545; font-size: 18px;">📄 Visualizador de Documento</h3>
+        <span class="modal-close" onclick="fecharModalPdf()" style="position: static; font-size: 28px;">&times;</span>
+      </div>
+      <iframe id="iframePdf" src="" style="width: 100%; height: 100%; border: none; border-radius: 4px;" allow="autoplay"></iframe>
     </div>
   </div>
 
@@ -1440,6 +1450,22 @@
       });
     }
     
+  function abrirModalPdf() {
+      let iframe = document.getElementById("iframePdf");
+      iframe.src = "https://drive.google.com/file/d/12g3Es43SJn-ajST1mqT9H2zG9FJqXegd/preview";
+      document.getElementById("modalPdfOverlay").style.display = "flex";
+    }
+
+    function fecharModalPdf() {
+      document.getElementById("modalPdfOverlay").style.display = "none";
+      document.getElementById("iframePdf").src = ""; // Limpa a URL ao fechar para economizar memória do navegador
+    }
+
+    function fecharModalPdfFora(e) {
+      if (e.target.id === "modalPdfOverlay") {
+        fecharModalPdf();
+      }
+    } 
   </script>
 </body>
 </html>
