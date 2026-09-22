@@ -886,38 +886,144 @@
       return String(horaStr).replace(/'/g, "").trim();
     }
     
-    function carregarDadosIniciais() {
-      document.getElementById("cardsContainer").innerHTML = "<h3 style='color: #ffffff; text-align: center;'>Carregando dados da planilha...</h3>";
-      
-      fetch(WEB_APP_URL + "?t=" + new Date().getTime(), { redirect: "follow", cache: "no-store" })
-        .then(response => response.json())
-        .then(livros => {
-          if (!Array.isArray(livros)) {
-            throw new Error(livros.mensagem || "Erro retornado pelo servidor.");
-          }
-          
-          document.getElementById("debugStatus").innerText = "";
-          dadosGlobais = livros;
+    // ============================================================
+    // V2.0 - Requisições robustas
+    // Não altera a lógica do site; apenas acrescenta timeout/retry.
+    // ============================================================
+    async function fetchJsonRobusto(url, options = {}, tentativas = 3, timeoutMs = 15000) {
+      let ultimoErro;
 
-          // Busca também os agendamentos para poder exibir o sininho
-          return fetch(WEB_APP_URL, {
+      for (let tentativa = 1; tentativa <= tentativas; tentativa++) {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+          const resposta = await fetch(url, {
+            ...options,
+            signal: controller.signal
+          });
+
+          clearTimeout(timer);
+
+          if (!resposta.ok) {
+            throw new Error("HTTP " + resposta.status);
+          }
+
+          return await resposta.json();
+        } catch (erro) {
+          clearTimeout(timer);
+          ultimoErro = erro;
+
+          if (tentativa < tentativas) {
+            await new Promise(resolve => setTimeout(resolve, 700 * tentativa));
+          }
+        }
+      }
+
+      if (ultimoErro && ultimoErro.name === "AbortError") {
+        throw new Error("Tempo limite excedido ao comunicar com o servidor.");
+      }
+
+      throw ultimoErro || new Error("Falha de comunicação com o servidor.");
+    }
+
+    function carregarDadosIniciais() {
+      const cardsContainer = document.getElementById("cardsContainer");
+      const debugStatus = document.getElementById("debugStatus");
+
+      cardsContainer.innerHTML =
+        "<h3 style='color: #ffffff; text-align: center;'>Carregando livros...</h3>";
+      debugStatus.innerText = "";
+
+      // Limpa os estudos enquanto uma nova leitura é feita.
+      estudosGlobais = [];
+
+      // ------------------------------------------------------------
+      // ETAPA 1: livros
+      // Os livros são renderizados assim que chegam.
+      // A consulta de estudos não bloqueia mais os cards.
+      // ------------------------------------------------------------
+      fetchJsonRobusto(
+        WEB_APP_URL + "?t=" + Date.now(),
+        { redirect: "follow", cache: "no-store" },
+        3,
+        15000
+      )
+      .then(livros => {
+        if (!Array.isArray(livros)) {
+          throw new Error(livros.mensagem || "Erro retornado pelo servidor.");
+        }
+
+        dadosGlobais = livros;
+        debugStatus.innerText = "";
+        renderizarCards();
+
+        // ----------------------------------------------------------
+        // ETAPA 2: estudos
+        // É independente dos livros. Se falhar, os cards continuam.
+        // ----------------------------------------------------------
+        fetchJsonRobusto(
+          WEB_APP_URL,
+          {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify({ funcao: "obterEstudos" })
-          }).then(res => res.json());
-        })
+          },
+          3,
+          15000
+        )
         .then(respEstudos => {
           if (respEstudos && respEstudos.status === "sucesso") {
             estudosGlobais = respEstudos.dados || [];
           } else {
             estudosGlobais = [];
           }
+
+          // Atualiza somente a apresentação dos cards (sinos/alertas).
           renderizarCards();
         })
         .catch(err => {
-          document.getElementById("debugStatus").innerText = "Erro ao carregar dados: " + err.message;
-          document.getElementById("cardsContainer").innerHTML = "";
+          console.warn("Não foi possível carregar os agendamentos:", err);
+          estudosGlobais = [];
+
+          // Os livros permanecem visíveis.
+          debugStatus.innerText =
+            "Livros carregados. Não foi possível carregar os agendamentos.";
         });
+      })
+      .catch(err => {
+        console.error("Erro ao carregar livros:", err);
+
+        cardsContainer.innerHTML = `
+          <div style="
+            text-align:center;
+            color:#ffffff;
+            padding:25px;
+            background:rgba(0,0,0,0.35);
+            border-radius:8px;
+          ">
+            <h3 style="margin-top:0;">Não foi possível carregar os livros.</h3>
+            <p style="color:#ddd;">${err.message || "Erro de conexão com o servidor."}</p>
+            <button
+              type="button"
+              onclick="carregarDadosIniciais()"
+              style="
+                width:auto;
+                padding:10px 20px;
+                background:#1a73e8;
+                color:#fff;
+                border:none;
+                border-radius:5px;
+                cursor:pointer;
+                font-weight:bold;
+              ">
+              🔄 Tentar novamente
+            </button>
+          </div>
+        `;
+
+        debugStatus.innerText = "";
+      });
     }
 
    function renderizarCards() {
@@ -967,7 +1073,7 @@
           if (percentual < 0) percentual = 0;
         }
 
-        let imagemHtml = item.capaUrl ? `<div class="card-img-container"><img src="${item.capaUrl}" alt="Capa" onerror="this.style.display='none'"></div>` : "";
+        let imagemHtml = item.capaUrl ? `<div class="card-img-container"><img src="${item.capaUrl}" alt="Capa" loading="lazy" decoding="async" onerror="this.style.display='none'"></div>` : "";
         let autorHtml = item.autor ? `<div class="card-autor">${item.autor}</div>` : "";
         let btnEditar = `<button type="button" class="btn-editar-card">✎ Editar</button>`;
 
